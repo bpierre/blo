@@ -1,0 +1,30 @@
+{
+  "name": "blo-benchmark",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "bench": "vitest bench"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "@vitest/browser": "^0.34.4",
+    "ethereum-blockies-base64": "^1.0.2",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.9",
+    "vitest": "^0.34.4",
+    "webdriverio": "^8.16.10"
+  },
+  "dependencies": {
+    "@download/blockies": "^1.0.3",
+    "blockies-react-svg": "^0.0.13",
+    "blockies-ts": "^1.0.0",
+    "rand-seed": "^1.0.2",
+    "react": "^18.2.0",
+    "react-component-benchmark": "^2.0.0",
+    "react-dom": "^18.2.0"
+  }
+}

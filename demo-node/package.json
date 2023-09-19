@@ -1,0 +1,11 @@
+{
+  "name": "demo-node",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun index.ts"
+  },
+  "dependencies": {
+    "blo": "^0.4.4"
+  }
+}

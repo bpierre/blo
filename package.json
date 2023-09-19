@@ -1,0 +1,44 @@
+{
+  "name": "blo",
+  "version": "0.4.4",
+  "license": "MIT",
+  "author": "Pierre Bertet <hi@bpier.re>",
+  "description": "blo is a small and fast library to generate Ethereum identicons.",
+  "keywords": ["ethereum", "eth", "identicon", "blockies", "web3", "dapps"],
+  "homepage": "https://github.com/bpierre/blo",
+  "bugs": "https://github.com/bpierre/blo/issues",
+  "repository": "github:bpierre/blo",
+  "type": "module",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "vite demo",
+    "demo-cli": "cd demo-cli && bun start",
+    "build": "tsc && vite build",
+    "bench-cli": "vitest bench benchmark",
+    "bench-browser": "vite dev benchmark",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.5.3",
+    "vitest": "^0.34.4"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
