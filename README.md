@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="860" alt="blo" src="https://github.com/bpierre/blo/assets/36158/1ada9bc9-c8d4-4ed6-8bf6-3a70cefce880">
+<img width="860" alt="blo" src="https://github.com/bpierre/blo/assets/36158/7ddc0bf0-076d-4c5a-8624-cc8646e4c5aa">
   <br><strong>blo</strong> is a small and fast library to generate Ethereum identicons.
   <br><br>
 </div>
