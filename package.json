@@ -1,10 +1,17 @@
 {
   "name": "blo",
-  "version": "0.4.4",
+  "version": "1.0.0",
   "license": "MIT",
   "author": "Pierre Bertet <hi@bpier.re>",
   "description": "blo is a small and fast library to generate Ethereum identicons.",
-  "keywords": ["ethereum", "eth", "identicon", "blockies", "web3", "dapps"],
+  "keywords": [
+    "ethereum",
+    "eth",
+    "identicon",
+    "blockies",
+    "web3",
+    "dapps"
+  ],
   "homepage": "https://github.com/bpierre/blo",
   "bugs": "https://github.com/bpierre/blo/issues",
   "repository": "github:bpierre/blo",
@@ -25,7 +32,9 @@
     "bench-browser": "vite dev benchmark",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
