@@ -103,7 +103,7 @@ See [`src/svg.ts`](./src/svg.ts) for an example of how to use it.
 The library ships with TypeScript types included.
 
 ```ts
-// The data structure needed to render an icon.
+// BloImage contains the data needed to render an icon.
 export type BloImage = [BloImageData, Palette];
 
 // 4x8 grid of the image left side, as 32 PaletteIndex items.

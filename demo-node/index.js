@@ -30,9 +30,8 @@ function renderImage([data, palette]) {
 
 function renderIcon(address) {
   console.log(
-    "\n",
     renderImage(bloImage(address)),
-    `\n${address}\n`,
+    `\n${address}`,
   );
 }
 
@@ -48,5 +47,3 @@ function hsl2rgb(h, s, l) {
 }
 
 renderIcon("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045");
-
-console.log("?", bloImage);

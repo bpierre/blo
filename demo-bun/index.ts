@@ -30,9 +30,8 @@ function renderImage([data, palette]: ReturnType<typeof bloImage>) {
 
 function renderIcon(address: `0x${string}`) {
   console.log(
-    "\n",
     renderImage(bloImage(address)),
-    `\n${address}\n`,
+    `\n${address}`,
   );
 }
 
