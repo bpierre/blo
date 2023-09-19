@@ -143,11 +143,11 @@ export type Address = `0x${string}`;
 
 ### Why is it named blo?
 
-blo is short for blockies, which is the name of the original library.
+blo is short for blockies, which is the name of [the original library](https://github.com/ethereum/blockies) it is based on.
 
 ### Can it be used to generate other types of identicons?
 
-blo implements the Ethereum identicons algorithm only, but you can use it with any type of data, just prefix it with `0x` to fullfill the `Address` type.
+blo only focuses on the Ethereum identicons algorithm but you can use it with any data, just prefix it with `0x` to fullfill the expected `Address` type if you are using TypeScript.
 
 ## License
 
