@@ -1,5 +1,5 @@
 {
-  "name": "demo",
+  "name": "demo-react",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,6 @@
     "vite": "^4.4.9"
   },
   "dependencies": {
-    "blo": "^0.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

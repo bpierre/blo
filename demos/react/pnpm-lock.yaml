@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  blo:
-    specifier: ^0.4.4
-    version: 0.4.4
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -379,11 +376,6 @@ packages:
     transitivePeerDependencies:
       - '@swc/helpers'
     dev: true
-
-  /blo@0.4.4:
-    resolution: {integrity: sha512-G9Q+FxEqTBFLYrP5FX9TbU5JPHYvj57NF6vRr/deijcLt3BhdgYYd0Hw+09rWO+Frj4W5FoPvqzvBTzAA0PZjw==}
-    engines: {node: '>=16'}
-    dev: false
 
   /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}

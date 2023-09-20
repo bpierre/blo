@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "bun index.ts"
+    "start": "node index.js"
   },
   "dependencies": {
-    "blo": "^0.4.4"
+    "blo": "file:../.."
   }
 }
