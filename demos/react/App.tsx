@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { blo } from "../..";
+import { blo } from "../../src";
 
 export default function App() {
   const [size, setSize] = useState(128);
