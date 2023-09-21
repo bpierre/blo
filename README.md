@@ -9,7 +9,7 @@
 ## Features
 
 - 🐥 **Small**: **[0.67 KB](https://bundlejs.com/?bundle&q=blo)** gzipped.
-- ☄️ **Fast**: **[4.7x faster](#library-comparison)** than the second fastest solution.
+- 💥 **Fast**: **[3.5x faster](#library-comparison)** than the second fastest solution.
 - 🔍 **Optimized**: Leverages SVG to generate compact and sharp images at any size.
 - 💆 **Simple**: Focuses on Ethereum identicons only, allowing for a simpler API.
 - 🗂 **Typed**: Ships with [types included](#types).
@@ -18,13 +18,14 @@
 
 ## Library Comparison
 
-| Library                               |             Renders/sec[^1] | Size                                                                                                       | Types                                        | Environment[^2]                                |   Rendering |
-| ------------------------------------- | --------------------------: | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------- | ----------: |
-| <b>blo</b>                            | <nobr><b>☄️ 7,862</b></nobr> | [![](https://img.shields.io/badge/0.67kB-6ead0a)](https://bundlejs.com/?bundle&q=blo)                      | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/all-6ead0a)   |         SVG |
-| <nobr>ethereum-blockies-base64</nobr> |                         948 | [![](https://img.shields.io/badge/2.75kB-ee4433)](https://bundlejs.com/?bundle&q=ethereum-blockies-base64) | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/all-6ead0a)   |         PNG |
-| <nobr>@download/blockies</nobr>       |                         361 | [![](https://img.shields.io/badge/0.67kB-6ead0a)](https://bundlejs.com/?bundle&q=%6ead0a%2Fblockies)       | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/dom-ee4433)   |      Canvas |
-| <nobr>blockies-react-svg</nobr>       |                       1,675 | [![](https://img.shields.io/badge/4kB-ee4433)](https://bundlejs.com/?bundle&q=blockies-react-svg)          | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/react-ee4433) | SVG (React) |
-| <nobr>blockies-ts</nobr>              |                         381 | [![](https://img.shields.io/badge/1.31kB-6ead0a)](https://bundlejs.com/?bundle&q=blockies-ts)              | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/dom-ee4433)   |      Canvas |
+| Library                               |              Renders/sec[^1] | Size                                                                                                       | Types                                        | Environment[^2]                                | Rendering |
+| ------------------------------------- | ---------------------------: | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------- | --------: |
+| <b>blo</b>                            | <nobr><b>💥 8,197</b></nobr> | [![](https://img.shields.io/badge/0.67kB-6ead0a)](https://bundlejs.com/?bundle&q=blo)                      | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/all-6ead0a)   |       SVG |
+| <nobr>ethereum-blockies-base64</nobr> |                          807 | [![](https://img.shields.io/badge/2.75kB-ee4433)](https://bundlejs.com/?bundle&q=ethereum-blockies-base64) | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/all-6ead0a)   |       PNG |
+| <nobr>blockies-react-svg</nobr>       |                        1,749 | [![](https://img.shields.io/badge/4kB-ee4433)](https://bundlejs.com/?bundle&q=blockies-react-svg)          | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/react-ee4433) |       SVG |
+| <nobr>@download/blockies</nobr>       |                          334 | [![](https://img.shields.io/badge/0.67kB-6ead0a)](https://bundlejs.com/?bundle&q=%6ead0a%2Fblockies)       | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/dom-ee4433)   |    Canvas |
+| <nobr>blockies-ts</nobr>              |                          342 | [![](https://img.shields.io/badge/1.31kB-6ead0a)](https://bundlejs.com/?bundle&q=blockies-ts)              | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/dom-ee4433)   |    Canvas |
+| <nobr>react-blockies</nobr>           |                        2,361 | [![](https://img.shields.io/badge/4.72kB-ee4433)](https://bundlejs.com/?bundle&q=react-blockies)           | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/react-ee4433) |    Canvas |
 
 [^1]: The number of renders per second. It was measured on Chrome 117 Linux with an AMD Ryzen 7 PRO 4750U. [See ./benchmark](./benchmark) for the methodology.
 

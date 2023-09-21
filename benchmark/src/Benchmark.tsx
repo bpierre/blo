@@ -5,6 +5,7 @@ import BlockiesSvgSync from "blockies-react-svg/dist/es/BlockiesSvgSync.mjs";
 import * as blockiesTs from "blockies-ts";
 import makeBlockie from "ethereum-blockies-base64";
 import { useRef, useState } from "react";
+import ReactBlockies from "react-blockies";
 import { Benchmark } from "react-component-benchmark";
 import { blo } from "../../src";
 
@@ -16,52 +17,72 @@ const randomAddress = () => {
       const char = Math.floor(Math.random() * 16).toString(16);
       return Math.random() > 0.5 ? char : char.toUpperCase();
     }).join("")
-  }` as `0x${string}`;
+  }`;
 };
 
-const addresses = Array.from({ length: SAMPLES }).map(randomAddress);
+const addresses = Array.from({ length: SAMPLES * 10 }).map(randomAddress);
 
 let i = 0;
-function nextAddress(): `0x${string}` {
-  return addresses[i = (i + 1) % SAMPLES];
+function nextAddress() {
+  return addresses[i = (i + 1) % SAMPLES] as `0x${string}`;
 }
 
-const BENCHMARKS: Record<string, () => JSX.Element> = {
-  "blo": () => (
-    <img
-      src={blo(nextAddress())}
-    />
-  ),
-  "ethereum-blockies-base64": () => (
+// All benchmarks are rendering a 64x64 image on a @2x display,
+// which requires to render the raster images at 128x128.
+const BENCHMARKS: Record<
+  string,
+  ({ address }: { address: `0x${string}` }) => JSX.Element
+> = {
+  "blo": ({ address }) => (
     <img
       width={64}
       height={64}
-      src={makeBlockie(nextAddress())}
+      src={blo(address)}
     />
   ),
-  "blockies-react-svg": () => (
+  "ethereum-blockies-base64": ({ address }) => (
+    <img
+      width={64}
+      height={64}
+      src={makeBlockie(address)}
+    />
+  ),
+  "blockies-react-svg": ({ address }) => (
     <BlockiesSvgSync
       size={8}
       scale={8}
-      address={nextAddress()}
+      address={address}
     />
   ),
-  "@download/blockies": () => (
+  "@download/blockies": ({ address }) => (
     <img
+      width={64}
+      height={64}
       src={blockiesCreateIcon({
-        seed: nextAddress().toLowerCase(), // @download/blockies doesn’t lowercase automatically so we do it here
-        scale: 8,
+        seed: address.toLowerCase(),
+        scale: 16,
         size: 8,
       }).toDataURL()}
     />
   ),
-  "blockies-ts": () => (
+  "blockies-ts": ({ address }) => (
     <img
+      width={64}
+      height={64}
       src={blockiesTs.create({
-        seed: nextAddress().toLowerCase(), // blockies-ts doesn’t lowercase automatically so we do it here
-        scale: 8,
+        seed: address.toLowerCase(),
+        scale: 16,
         size: 8,
       }).toDataURL()}
+    />
+  ),
+  "react-blockies": ({ address }) => (
+    // className is used to force the display size to 64x64
+    <ReactBlockies
+      className="react-blockies"
+      seed={address.toLowerCase()}
+      scale={16}
+      size={8}
     />
   ),
 } as const;
@@ -154,19 +175,24 @@ export default function App() {
                 </td>
                 <td>
                   <div className="render-zone">
-                    <Benchmark
-                      ref={refs[name]}
-                      component={Component}
-                      onComplete={(result) => {
-                        setResults((r) => ({
-                          ...r,
-                          [name]: { ...result, rps: 1000 / result.mean },
-                        }));
-                        setRunning(null);
-                      }}
-                      samples={SAMPLES}
-                      type="mount"
-                    />
+                    <div className="benchmark">
+                      <Benchmark
+                        ref={refs[name]}
+                        component={() => <Component address={nextAddress()} />}
+                        onComplete={(result) => {
+                          setResults((r) => ({
+                            ...r,
+                            [name]: { ...result, rps: 1000 / result.mean },
+                          }));
+                          setRunning(null);
+                        }}
+                        samples={SAMPLES}
+                        type="mount"
+                      />
+                    </div>
+                    <div className="sample">
+                      <Component address="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" />
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -196,9 +222,26 @@ const STYLES = `
     padding: 10px 20px;
   }
   .render-zone {
+    display: flex;
+    gap: 20px;
+  }
+  .render-zone div {
+    position: relative;
     contain: strict;
     width: 64px;
     height: 64px;
     outline: 2px solid #000;
+  }
+
+  .render-zone img,
+  .render-zone svg,
+  .render-zone canvas {
+    position: absolute;
+    inset: 0;
+  }
+
+  .react-blockies {
+    width: 64px !important;
+    height: 64px !important;
   }
 `;

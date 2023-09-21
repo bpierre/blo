@@ -14,11 +14,14 @@ declare module "blockies-react-svg/dist/es/BlockiesSvgSync.mjs" {
   }): JSX.Element;
 }
 
-declare module "blockies-react-svg/dist/es/makeBlockiesUrl.mjs" {
-  export default function makeBlockiesUrl(
-    address: string,
-    size?: number,
-    caseSensitive?: boolean,
-    scale?: number,
-  ): string;
+declare module "react-blockies" {
+  export default function Blockies(props: {
+    seed: string;
+    size?: number;
+    scale?: number;
+    color?: string;
+    bgColor?: string;
+    spotColor?: string;
+    className?: string;
+  }): JSX.Element;
 }

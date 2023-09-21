@@ -24,6 +24,7 @@
     "blockies-ts": "^1.0.0",
     "rand-seed": "^1.0.2",
     "react": "^18.2.0",
+    "react-blockies": "^1.4.1",
     "react-component-benchmark": "^2.0.0",
     "react-dom": "^18.2.0"
   }
