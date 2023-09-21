@@ -1,6 +1,6 @@
 {
   "name": "blo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "author": "Pierre Bertet <hi@bpier.re>",
   "description": "blo is a small and fast library to generate Ethereum identicons.",
@@ -29,7 +29,9 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
