@@ -27,8 +27,6 @@
   "scripts": {
     "dev": "vite ./demos/react",
     "build": "tsc && vite build",
-    "bench-cli": "vitest bench benchmark",
-    "bench-browser": "vite dev benchmark",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "files": ["dist"],
