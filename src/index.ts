@@ -1,7 +1,7 @@
 import type { Address, BloImage } from "./types";
 
 import { image } from "./image";
-import { toSvg } from "./svg";
+import { svg } from "./svg";
 
 export type {
   Address,
@@ -17,9 +17,9 @@ export function blo(address: Address, size: number = 64): string {
 }
 
 export function bloSvg(address: Address, size: number = 64): string {
-  return toSvg(bloImage(address), size);
+  return svg(address, size);
 }
 
 export function bloImage(address: Address): BloImage {
-  return image(address.toLowerCase());
+  return image(address);
 }

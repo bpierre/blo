@@ -1,28 +1,24 @@
-import type { BloImage, BloImageData, Hsl, PaletteIndex } from "./types";
+import type { Address, BloImage, BloImageData, Hsl, PaletteIndex } from "./types";
 
-export function image(seed: string): BloImage {
-  const random = seedRandom(seed);
+import { seedRandom } from "./random";
 
-  // the palette calls order is significant
-  const c = randomColor(random);
-  const b = randomColor(random);
-  const s = randomColor(random);
+// The random() calls must happen in this exact order:
+// 1. palette: main color (6 calls)
+// 2. palette: background (6 calls)
+// 3. palette: spot color (6 calls)
+// 4. image data (32 calls)
 
-  return [
-    randomImageData(random),
-    [b, c, s],
-  ];
+export function image(address: Address): BloImage {
+  const random = seedRandom(address.toLowerCase());
+  const palette = randomPalette(random);
+  const data = randomImageData(random);
+  return [data, palette];
 }
 
 export function randomImageData(random: () => number): BloImageData {
   const data = new Uint8Array(32);
   for (let i = 0; i < 32; i++) {
-    data[
-      // row
-      Math.floor(i / 4) * 4
-      // column
-      + i % 4
-    ] = Math.floor(
+    data[i] = Math.floor(
       // background: 43% chances
       // color:      43% chances
       // spot:       13% chances
@@ -32,35 +28,22 @@ export function randomImageData(random: () => number): BloImageData {
   return data;
 }
 
+export function randomPalette(random: () => number): [Hsl, Hsl, Hsl] {
+  // calls order is significant
+  const c = randomColor(random);
+  const b = randomColor(random);
+  const s = randomColor(random);
+  return [b, c, s];
+}
+
 export function randomColor(rand: () => number): Hsl {
+  // Math.floor() calls omitted since Uint16Array() does it
   return new Uint16Array([
     // hue = 0 to 360 (whole color spectrum)
-    Math.floor(rand() * 360),
+    rand() * 360,
     // saturation = 40 to 100 (avoid greyish colors)
-    Math.floor(40 + rand() * 60),
+    40 + rand() * 60,
     // lightness = 0 to 100 but probabilities are a bell curve around 50%
-    Math.floor((rand() + rand() + rand() + rand()) * 25),
+    (rand() + rand() + rand() + rand()) * 25,
   ]);
-}
-
-export function seedRandom(seed: string): () => number {
-  const rseed = randSeed(seed);
-  return function random(): number {
-    // based on Java’s String.hashCode(), expanded to 4 32bit values
-    const t = rseed[0] ^ (rseed[0] << 11);
-    rseed[0] = rseed[1];
-    rseed[1] = rseed[2];
-    rseed[2] = rseed[3];
-    rseed[3] = rseed[3] ^ (rseed[3] >> 19) ^ t ^ (t >> 8);
-    return (rseed[3] >>> 0) / (1 << 31 >>> 0);
-  };
-}
-
-function randSeed(seed: string): Uint32Array {
-  // Xorshift: [x, y, z, w] 32 bit values
-  const rseed = new Uint32Array([0, 0, 0, 0]);
-  for (let i = 0; i < seed.length; i++) {
-    rseed[i % 4] = (rseed[i % 4] << 5) - rseed[i % 4] + seed.charCodeAt(i);
-  }
-  return rseed;
 }
