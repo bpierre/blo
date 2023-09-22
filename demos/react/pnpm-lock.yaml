@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  blo:
+    specifier: file:../..
+    version: file:../..
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -519,3 +522,9 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
+
+  file:../..:
+    resolution: {directory: ../.., type: directory}
+    name: blo
+    engines: {node: '>=16'}
+    dev: false

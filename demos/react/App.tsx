@@ -1,5 +1,5 @@
+import { blo } from "blo";
 import { useState } from "react";
-import { blo } from "../../src";
 
 export default function App() {
   const [size, setSize] = useState(128);
@@ -81,7 +81,7 @@ export default function App() {
           <div className="size">
             <input
               type="range"
-              min="24"
+              min="8"
               max="400"
               value={size}
               onChange={(e) => setSize(parseInt(e.target.value))}
@@ -92,7 +92,9 @@ export default function App() {
         {address.startsWith("0x") && (
           <img
             alt="blo"
-            src={blo(address as `0x${string}`, size)}
+            width={size}
+            height={size}
+            src={blo(address as `0x${string}`)}
           />
         )}
       </div>

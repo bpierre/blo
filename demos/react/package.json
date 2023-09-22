@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "start": "vite"
+    "dev": "vite --port 3000",
+    "build": "vite build"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
@@ -13,6 +13,7 @@
     "vite": "^4.4.9"
   },
   "dependencies": {
+    "blo": "file:../..",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }
