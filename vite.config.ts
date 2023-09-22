@@ -7,7 +7,7 @@ export default defineConfig(async ({ mode }) => ({
     outDir: "dist",
     lib: {
       entry: "src/index.ts",
-      formats: ["es"],
+      formats: ["es", "cjs"],
       fileName: "index",
     },
     sourcemap: mode === "production" || "inline",
