@@ -142,13 +142,27 @@ export type Address = `0x${string}`;
 
 ## FAQ
 
-### Why is it named blo?
+### Does it follow the exact same algorithm as Etherscan, MetaMask and others?
 
-blo is short for blockies, which is the name of [the original library](https://github.com/ethereum/blockies) it is based on.
+Yes.
+
+### Does it work with ENS names?
+
+No it only works with Ethereum addresses, but you can resolve the ENS name to an address (e.g. with [wagmi](https://wagmi.sh/core/actions/fetchEnsAddress)) and pass the result to blo.
+
+### Can blo render other formats than SVG?
+
+You can render to any format you want by using the `bloImage()` function, which returns a data structure (see [API](#api) above). Check out the [Bun](./demos/bun) and [Node](./demos/node) demos for examples of rendering an identicon in the terminal.
+
+<img width="400" src="https://github.com/bpierre/blo/assets/36158/a7c86d01-f003-49d7-8f9e-93097b502872" alt="Ethereum identicon rendered in the terminal">
 
 ### Can it be used to generate other types of identicons?
 
 blo only focuses on the Ethereum identicons algorithm but you can use it with any data, just prefix it with `0x` to fullfill the expected `Address` type if you are using TypeScript.
+
+### Why is it named blo?
+
+blo is short for blockies, which is the name of [the original library](https://github.com/ethereum/blockies) it is based on.
 
 ## License
 
