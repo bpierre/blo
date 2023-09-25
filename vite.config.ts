@@ -8,7 +8,11 @@ export default defineConfig(async ({ mode }) => ({
     lib: {
       entry: "src/index.ts",
       formats: ["es", "cjs"],
-      fileName: "index",
+      fileName: (format, entryName) => (
+        format === "es"
+          ? `${entryName}.js`
+          : `${entryName}.${format}.js`
+      ),
     },
     sourcemap: mode === "production" || "inline",
   },

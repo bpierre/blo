@@ -17,12 +17,12 @@
   "repository": "github:bpierre/blo",
   "type": "module",
   "module": "./dist/index.js",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.cjs.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
+      "require": "./dist/index.cjs.js",
       "default": "./dist/index.js"
     }
   },
