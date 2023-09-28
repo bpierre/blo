@@ -158,7 +158,7 @@ You can render to any format you want by using the `bloImage()` function, which 
 
 ### Can it be used to generate other types of identicons?
 
-blo only focuses on the Ethereum identicons algorithm but you can use it with any data, just prefix it with `0x` to fullfill the expected `Address` type if you are using TypeScript.
+blo only focuses on the Ethereum identicons algorithm but you can use it with any data, just prefix it with `0x` to fulfill the expected `Address` type if you are using TypeScript.
 
 ### Why is it named blo?
 
