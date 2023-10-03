@@ -34,7 +34,7 @@
 ## Getting Started
 
 ```sh
-npm i blo
+npm i -S blo
 pnpm add blo
 yarn add blo
 ```
