@@ -8,15 +8,15 @@
     "bench": "vitest bench"
   },
   "devDependencies": {
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react-swc": "^3.3.2",
-    "@vitest/browser": "^0.34.4",
+    "@types/react": "^18.2.27",
+    "@types/react-dom": "^18.2.12",
+    "@vitejs/plugin-react-swc": "^3.4.0",
+    "@vitest/browser": "^0.34.6",
     "ethereum-blockies-base64": "^1.0.2",
     "typescript": "^5.0.2",
-    "vite": "^4.4.9",
-    "vitest": "^0.34.4",
-    "webdriverio": "^8.16.10"
+    "vite": "^4.4.11",
+    "vitest": "^0.34.6",
+    "webdriverio": "^8.17.0"
   },
   "dependencies": {
     "@download/blockies": "^1.0.3",
