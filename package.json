@@ -1,6 +1,6 @@
 {
   "name": "blo",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "license": "MIT",
   "author": "Pierre Bertet <hi@bpier.re>",
   "description": "blo is a small and fast library to generate Ethereum identicons.",
