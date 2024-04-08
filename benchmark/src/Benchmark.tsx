@@ -103,7 +103,6 @@ export default function App() {
   const refs = Object.fromEntries(
     Object.keys(BENCHMARKS).map((name) => [
       name,
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       useRef<BenchmarkRef | null>(null),
     ]),
   );
