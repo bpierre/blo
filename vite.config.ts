@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
-export default defineConfig(async ({ mode }) => ({
+export default defineConfig(({ mode }) => ({
   build: {
     target: ["es2020", "esnext"],
     outDir: "dist",
@@ -11,7 +11,7 @@ export default defineConfig(async ({ mode }) => ({
       fileName: (format, entryName) => (
         format === "es"
           ? `${entryName}.js`
-          : `${entryName}.${format}.js`
+          : `${entryName}.${format}`
       ),
     },
     sourcemap: mode === "production" || "inline",
