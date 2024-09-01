@@ -12,9 +12,9 @@
 - 💥 **Fast**: **[3.5x faster](#library-comparison)** than the second fastest solution.
 - 🔍 **Optimized**: Leverages SVG to generate compact and sharp images at any size.
 - 💆 **Simple**: Focuses on Ethereum identicons only, allowing for a simpler API.
-- 🗂 **Typed**: Ships with [types included](#types).
-- 👫 **Works everywhere**: browsers, [Bun](https://bun.sh/), [Node.js](http://nodejs.org/).
-- ☁️ **Zero dependencies**.
+- 🗂 **Typed**: Ships with [TypeScript definitions](#types).
+- 👫 **Universal**: Compatible with browsers, [Bun](https://bun.sh/), and [Node.js](http://nodejs.org/).
+- ☁️ **Standalone**: Zero dependencies.
 
 ## Library Comparison
 
@@ -95,7 +95,7 @@ Same as above except it returns the SVG code instead of a data URI string.
 
 Get a `BloImage` data structure that can be used to render the image in different formats.
 
-See [`src/svg.ts`](./src/svg.ts) for an example of how to use it.
+Check the [Bun](./demos/bun/index.ts) and [Node](./demos/node/index.js) demos to see usage examples.
 
 </details>
 
