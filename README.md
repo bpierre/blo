@@ -63,12 +63,12 @@ function AddressIcon({ address }: { address: `0x${string}` }) {
 ## API
 
 <details>
-<summary><b><code>blo(address: Address, size = 64): string</code></b></summary>
+<summary><b><code>blo(address: Address, size = 64, palette?: Palette): string</code></b></summary>
 <br>
 
 Get a data URI string representing the identicon as an SVG image.
 
-The `size` paramater shouldn’t usually be needed, as the image will stay sharp no matter what the size of the `img` element is.
+The `size` parameter shouldn’t usually be needed, as the image will stay sharp no matter what the size of the `img` element is.
 
 Example:
 
@@ -79,10 +79,23 @@ img.src = blo(address); // size inside the SVG defaults to 64px
 img2.src = blo(address, 24); // set it to 24px
 ```
 
+Use the optional `palette` parameter to customize image colors.
+
+Example:
+
+```ts
+import { blo, hsl } from "blo";
+
+img.src = blo(address, 64, [
+  hsl(206, 100, 94), // background
+  hsl(167, 80, 45),  // color
+  hsl(345, 88, 35)   // spot
+]);
+```
 </details>
 
 <details>
-<summary><b><code>bloSvg(address: Address, size = 64): string</code></b></summary>
+<summary><b><code>bloSvg(address: Address, size = 64, palette?: Palette): string</code></b></summary>
 <br>
 
 Same as above except it returns the SVG code instead of a data URI string.
@@ -90,7 +103,7 @@ Same as above except it returns the SVG code instead of a data URI string.
 </details>
 
 <details>
-<summary><b><code>bloImage(address: Address): BloImage</code></b></summary>
+<summary><b><code>bloImage(address: Address, palette?: Palette): BloImage</code></b></summary>
 <br>
 
 Get a `BloImage` data structure that can be used to render the image in different formats.
