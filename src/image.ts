@@ -1,18 +1,18 @@
-import type { Address, BloImage, BloImageData, Hsl, PaletteIndex } from "./types";
+import type { Address, BloImage, BloImageData, Hsl, Palette, PaletteIndex } from "./types";
 
 import { seedRandom } from "./random";
 
 // The random() calls must happen in this exact order:
-// 1. palette: main color (6 calls)
-// 2. palette: background (6 calls)
-// 3. palette: spot color (6 calls)
+// 1. palette: main color (6 calls, if no custom palette)
+// 2. palette: background (6 calls, if no custom palette)
+// 3. palette: spot color (6 calls, if no custom palette)
 // 4. image data (32 calls)
 
-export function image(address: Address): BloImage {
+export function image(address: Address, palette?: Palette): BloImage {
   const random = seedRandom(address.toLowerCase());
-  const palette = randomPalette(random);
+  const selectedPalette = palette ?? randomPalette(random);
   const data = randomImageData(random);
-  return [data, palette];
+  return [data, selectedPalette];
 }
 
 export function randomImageData(random: () => number): BloImageData {
