@@ -1,4 +1,4 @@
-import type { Address, BloImage, BloImageData, Hsl, Palette, PaletteIndex } from "./types";
+import type { BloImage, BloImageData, Hsl, Palette, PaletteIndex, Seed } from "./types";
 
 import { seedRandom } from "./random";
 
@@ -8,8 +8,8 @@ import { seedRandom } from "./random";
 // 3. palette: spot color (6 calls, if no custom palette)
 // 4. image data (32 calls)
 
-export function image(address: Address, palette?: Palette): BloImage {
-  const random = seedRandom(address.toLowerCase());
+export function image(seed: Seed, palette?: Palette): BloImage {
+  const random = seedRandom(seed.toLowerCase());
   const selectedPalette = palette ?? randomPalette(random);
   const data = randomImageData(random);
   return [data, selectedPalette];

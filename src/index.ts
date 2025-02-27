@@ -1,4 +1,4 @@
-import type { Address, BloImage, Hsl, Palette } from "./types";
+import type { BloImage, Hsl, Palette, Seed } from "./types";
 
 import { image } from "./image";
 import { svg } from "./svg";
@@ -10,18 +10,19 @@ export type {
   Hsl,
   Palette,
   PaletteIndex,
+  Seed
 } from "./types";
 
-export function blo(address: Address, size: number = 64, pallette?: Palette): string {
-  return "data:image/svg+xml;base64," + btoa(bloSvg(address, size, pallette));
+export function blo(seed: Seed, size: number = 64, pallette?: Palette): string {
+  return "data:image/svg+xml;base64," + btoa(bloSvg(seed, size, pallette));
 }
 
-export function bloSvg(address: Address, size: number = 64, palette?: Palette): string {
-  return svg(address, size, palette);
+export function bloSvg(seed: Seed, size: number = 64, palette?: Palette): string {
+  return svg(seed, size, palette);
 }
 
-export function bloImage(address: Address, palette?: Palette): BloImage {
-  return image(address, palette);
+export function bloImage(seed: Seed, palette?: Palette): BloImage {
+  return image(seed, palette);
 }
 
 export function hsl(hue: number, saturation: number, lightness: number): Hsl {

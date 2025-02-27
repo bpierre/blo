@@ -24,5 +24,9 @@ export type PaletteIndex =
 // [2]: 0-100 (lightness)
 export type Hsl = Uint16Array;
 
-// An Ethereum address.
+
+// An Ethereum address. (Kept for backward compatibility)
 export type Address = `0x${string}`;
+
+// A seed string used.
+export type Seed = string | Address;

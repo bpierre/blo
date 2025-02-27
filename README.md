@@ -63,7 +63,7 @@ function AddressIcon({ address }: { address: `0x${string}` }) {
 ## API
 
 <details>
-<summary><b><code>blo(address: Address, size = 64, palette?: Palette): string</code></b></summary>
+<summary><b><code>blo(seed: Seed, size = 64, palette?: Palette): string</code></b></summary>
 <br>
 
 Get a data URI string representing the identicon as an SVG image.
@@ -86,7 +86,7 @@ Example:
 ```ts
 import { blo, hsl } from "blo";
 
-img.src = blo(address, 64, [
+img.src = blo(data, 64, [
   hsl(206, 100, 94), // background
   hsl(167, 80, 45),  // color
   hsl(345, 88, 35)   // spot
@@ -95,7 +95,7 @@ img.src = blo(address, 64, [
 </details>
 
 <details>
-<summary><b><code>bloSvg(address: Address, size = 64, palette?: Palette): string</code></b></summary>
+<summary><b><code>bloSvg(seed: Seed, size = 64, palette?: Palette): string</code></b></summary>
 <br>
 
 Same as above except it returns the SVG code instead of a data URI string.
@@ -103,7 +103,7 @@ Same as above except it returns the SVG code instead of a data URI string.
 </details>
 
 <details>
-<summary><b><code>bloImage(address: Address, palette?: Palette): BloImage</code></b></summary>
+<summary><b><code>bloImage(seed: Seed, palette?: Palette): BloImage</code></b></summary>
 <br>
 
 Get a `BloImage` data structure that can be used to render the image in different formats.
@@ -145,6 +145,9 @@ export type Hsl = Uint16Array;
 
 // An Ethereum address.
 export type Address = `0x${string}`;
+
+// A data seed string.
+export type Seed = string | Address;
 ```
 
 ## Acknowledgements
@@ -171,7 +174,7 @@ You can render to any format you want by using the `bloImage()` function, which 
 
 ### Can it be used to generate other types of identicons?
 
-blo only focuses on the Ethereum identicons algorithm but you can use it with any data, just prefix it with `0x` to fulfill the expected `Address` type if you are using TypeScript.
+blo only focuses on the Ethereum identicons algorithm but you can use it with any string.
 
 ### Why is it named blo?
 
