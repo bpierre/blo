@@ -6,12 +6,12 @@
     "start": "bun index.ts"
   },
   "dependencies": {
-    "blo": "file:../.."
+    "blo": "latest"
   },
   "devDependencies": {
     "bun-types": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.2"
   }
 }
