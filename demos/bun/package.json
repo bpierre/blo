@@ -7,11 +7,5 @@
   },
   "dependencies": {
     "blo": "latest"
-  },
-  "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.8.2"
   }
 }
