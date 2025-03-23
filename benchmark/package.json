@@ -3,29 +3,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
     "bench": "vitest bench"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.74",
-    "@types/react-dom": "^18.2.24",
-    "@vitejs/plugin-react-swc": "^3.6.0",
-    "@vitest/browser": "^1.4.0",
-    "ethereum-blockies-base64": "^1.0.2",
-    "typescript": "^5.4.4",
-    "vite": "^5.2.8",
-    "vitest": "^1.4.0",
-    "webdriverio": "^8.35.1"
   },
   "dependencies": {
     "@download/blockies": "^1.0.3",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
     "blockies-react-svg": "^0.0.13",
     "blockies-ts": "^1.0.0",
-    "rand-seed": "^1.0.2",
-    "react": "^18.2.0",
+    "canvas": "^3.1.0",
+    "ethereum-blockies-base64": "^1.0.2",
+    "rand-seed": "^2.1.7",
     "react-blockies": "^1.4.1",
-    "react-component-benchmark": "^2.0.0",
-    "react-dom": "^18.2.0"
+    "typescript": "^5.4.4",
+    "vitest": "^3.0.9"
   }
 }
