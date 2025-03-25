@@ -3,19 +3,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "bench": "vitest bench"
+    "bench": "bun index.ts"
   },
   "dependencies": {
     "@download/blockies": "^1.0.3",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
+    "blo": "latest",
     "blockies-react-svg": "^0.0.13",
     "blockies-ts": "^1.0.0",
     "canvas": "^3.1.0",
     "ethereum-blockies-base64": "^1.0.2",
+    "mitata": "^1.0.34",
     "rand-seed": "^2.1.7",
     "react-blockies": "^1.4.1",
-    "typescript": "^5.4.4",
-    "vitest": "^3.0.9"
+    "typescript": "^5.4.4"
   }
 }
