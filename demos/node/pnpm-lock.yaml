@@ -1,18 +1,13 @@
-lockfileVersion: '6.0'
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
-  blo:
-    specifier: file:../..
-    version: file:../..
+importers:
 
-packages:
-
-  file:../..:
-    resolution: {directory: ../.., type: directory}
-    name: blo
-    engines: {node: '>=16'}
-    dev: false
+  .:
+    dependencies:
+      blo:
+        specifier: link:../..
+        version: link:../..
