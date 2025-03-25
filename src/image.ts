@@ -1,6 +1,6 @@
-import type { Address, BloImage, Hsl, PaletteIndex } from "./types";
+import type { Address, BloImage, Hsl, PaletteIndex } from "./types.js";
 
-import { nextRandom, randSeed } from "./random";
+import { nextRandom, randSeed } from "./random.js";
 
 // The random() calls must happen in this exact order:
 // 1. palette: main color (6 calls)

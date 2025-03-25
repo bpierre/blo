@@ -1,25 +1,54 @@
+import { execSync } from "node:child_process";
 import { defineConfig } from "vite";
-import dts from "vite-plugin-dts";
 
-export default defineConfig(({ mode }) => ({
+function modulePath(format: string, path: string) {
+  return (format === "es" ? "esm" : "cjs") + "/" + path;
+}
+
+export default defineConfig({
   build: {
-    target: ["es2020", "esnext"],
+    target: ["es2021", "esnext"],
     outDir: "dist",
     lib: {
       entry: "src/index.ts",
       formats: ["es", "cjs"],
-      fileName: (format, entryName) => (
-        format === "es"
-          ? `${entryName}.js`
-          : `${entryName}.${format}`
-      ),
+      fileName: (format, name) => modulePath(format, `${name}.js`),
     },
-    sourcemap: mode === "production" || "inline",
-  },
-  optimizeDeps: {
-    entries: ["src/index.ts"],
+    sourcemap: true,
+    rollupOptions: {
+      output: { preserveModules: true },
+    },
+    minify: false,
   },
   plugins: [
-    dts({ insertTypesEntry: true }),
+    {
+      name: "emit-package-json",
+      generateBundle({ format }) {
+        this.emitFile({
+          type: "asset",
+          fileName: modulePath(format, "package.json"),
+          source: JSON.stringify({
+            type: format === "es" ? "module" : "commonjs",
+            sideEffects: false,
+          }),
+        });
+      },
+    },
+    {
+      name: "emit-types",
+      closeBundle() {
+        execSync([
+          "tsc",
+          "--rootDir ./src",
+          "--emitDeclarationOnly",
+          "--declaration",
+          "--declarationMap",
+          "--declarationDir ./dist/types",
+        ].join(" "));
+        console.log(
+          `\x1b[32m✓\x1b[0m declaration files emitted to ./dist/types.`,
+        );
+      },
+    },
   ],
-}));
+});

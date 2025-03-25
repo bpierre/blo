@@ -1,7 +1,6 @@
-import type { Address } from "./types";
+import type { Address } from "./types.js";
 
-import { randomPalette } from "./image";
-import { seedRandom } from "./random";
+import { image } from "./image.js";
 
 const SVG_START = "<svg "
   + "xmlns=\"http://www.w3.org/2000/svg\" "
