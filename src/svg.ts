@@ -3,34 +3,43 @@ import type { Address } from "./types";
 import { randomPalette } from "./image";
 import { seedRandom } from "./random";
 
-const SVG_START = `<svg `
-  + `xmlns="http://www.w3.org/2000/svg" `
-  + `viewBox="0 0 8 8" `
-  + `shape-rendering="optimizeSpeed" `; // optimizeSpeed stays sharp thanks to using <path />
+const SVG_START = "<svg "
+  + "xmlns=\"http://www.w3.org/2000/svg\" "
+  + "viewBox=\"0 0 8 8\" "
+  + "shape-rendering=\"optimizeSpeed\" "; // optimizeSpeed stays sharp thanks to using <path />
+const SVG_END = "</svg>";
+
+const PATH_1 = "<path fill=\"hsl(";
+const PATH_2 = "% ";
+const PATH_3 = "%)\" d=\"";
+const PATH_4 = "\"/>";
+
+const BACKGROUND_D = "M0,0H8V8H0z";
 
 export function svg(address: Address, size: number) {
-  const random = seedRandom(address.toLowerCase());
-
-  const [b, c, s] = randomPalette(random);
+  const [data, [b, c, s]] = image(address);
 
   const paths = [
-    `M0,0H8V8H0z`, // background
-    ``, // color
-    ``, // spot
+    "", // color
+    "", // spot
   ];
 
   for (let i = 0, x, y; i < 32; i++) {
-    x = i % 4;
-    y = Math.floor(i / 4);
-    const colorIndex = Math.floor(random() * 2.3);
-    if (colorIndex > 0) {
-      paths[colorIndex] += `M${x},${y}h1v1h-1zM${7 - x},${y}h1v1h-1z`;
+    if (data[i] === 0) { // skip background
+      continue;
     }
+
+    x = i & 3; // same as i % 4
+    y = i >> 2; // same as Math.floor(i / 4)
+
+    // pixel on the left side (x) mirrored horizontally (7 - x)
+    const square = "," + y + "h1v1h-1z";
+    paths[data[i] - 1] += "M" + x + square + "M" + (7 - x) + square;
   }
 
-  return `${SVG_START}width="${size}" height="${size}">`
-    + `<path fill="hsl(${b[0]} ${b[1]}% ${b[2]}%)" d="${paths[0]}"/>`
-    + `<path fill="hsl(${c[0]} ${c[1]}% ${c[2]}%)" d="${paths[1]}"/>`
-    + `<path fill="hsl(${s[0]} ${s[1]}% ${s[2]}%)" d="${paths[2]}"/>`
-    + "</svg>";
+  return SVG_START + "width=\"" + size + "\" height=\"" + size + "\">"
+    + PATH_1 + b[0] + " " + b[1] + PATH_2 + b[2] + PATH_3 + BACKGROUND_D + PATH_4
+    + PATH_1 + c[0] + " " + c[1] + PATH_2 + c[2] + PATH_3 + paths[0] + PATH_4
+    + PATH_1 + s[0] + " " + s[1] + PATH_2 + s[2] + PATH_3 + paths[1] + PATH_4
+    + SVG_END;
 }
