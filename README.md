@@ -8,7 +8,7 @@
 
 ## Features
 
-- 🐥 **Small**: **[0.7 kB](https://bundlejs.com/?bundle&q=blo)** gzipped.
+- 🐥 **Small**: **[0.7 kB](https://bundlejs.com/?bundle&q=blo)** gzipped, even less with tree shaking.
 - 💥 **Fast**: **[more than 5x faster](#benchmark)** than the second fastest solution.
 - 🔍 **Optimized**: Leverages SVG to generate compact and sharp images at any size.
 - 💆 **Simple**: Focuses on Ethereum identicons only, allowing for a simpler API.
