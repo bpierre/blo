@@ -8,7 +8,7 @@
 
 ## Features
 
-- 🐥 **Small**: **[0.67 KB](https://bundlejs.com/?bundle&q=blo)** gzipped.
+- 🐥 **Small**: **[0.7 kB](https://bundlejs.com/?bundle&q=blo)** gzipped.
 - 💥 **Fast**: **[more than 5x faster](#benchmark)** than the second fastest solution.
 - 🔍 **Optimized**: Leverages SVG to generate compact and sharp images at any size.
 - 💆 **Simple**: Focuses on Ethereum identicons only, allowing for a simpler API.
@@ -20,9 +20,9 @@
 
 | Library                               | Operations/sec[^1] | Size                                                                                                       | Types                                        | Environment[^2]                                | Rendering |
 | ------------------------------------- | -----------------: | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------- | --------: |
-| <b>blo</b>                            |         💥 403,226 | [![](https://img.shields.io/badge/0.67kB-6ead0a)](https://bundlejs.com/?bundle&q=blo)                      | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/all-6ead0a)   |       SVG |
+| <b>blo</b>                            |         💥 403,226 | [![](https://img.shields.io/badge/0.70kB-6ead0a)](https://bundlejs.com/?bundle&q=blo)                      | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/all-6ead0a)   |       SVG |
 | <nobr>ethereum-blockies-base64</nobr> |              2,191 | [![](https://img.shields.io/badge/2.75kB-ee4433)](https://bundlejs.com/?bundle&q=ethereum-blockies-base64) | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/all-6ead0a)   |       PNG |
-| <nobr>blockies-react-svg</nobr>       |             76,628 | [![](https://img.shields.io/badge/4kB-ee4433)](https://bundlejs.com/?bundle&q=blockies-react-svg)          | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/react-ee4433) |       SVG |
+| <nobr>blockies-react-svg</nobr>       |             76,628 | [![](https://img.shields.io/badge/4.00kB-ee4433)](https://bundlejs.com/?bundle&q=blockies-react-svg)       | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/react-ee4433) |       SVG |
 | <nobr>@download/blockies</nobr>       |                112 | [![](https://img.shields.io/badge/0.67kB-6ead0a)](https://bundlejs.com/?bundle&q=%6ead0a%2Fblockies)       | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/dom-ee4433)   |    Canvas |
 | <nobr>blockies-ts</nobr>              |                137 | [![](https://img.shields.io/badge/1.31kB-6ead0a)](https://bundlejs.com/?bundle&q=blockies-ts)              | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/dom-ee4433)   |    Canvas |
 | <nobr>react-blockies</nobr>           |              4,693 | [![](https://img.shields.io/badge/4.72kB-ee4433)](https://bundlejs.com/?bundle&q=react-blockies)           | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/react-ee4433) |    Canvas |
