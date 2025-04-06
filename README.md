@@ -4,7 +4,7 @@
   <br><br>
 </div>
 
-<p align=center><a href="https://www.npmjs.com/package/blo"><img src="https://badgen.net/npm/v/blo" alt="npm version"></a> <a href="https://bundlejs.com/?q=blo"><img src="https://deno.bundlejs.com/badge?q=blo" alt="bundle size"></a> <a href="https://github.com/bpierre/blo/blob/main/LICENSE"><img src="https://badgen.net/github/license/bpierre/blo" alt="License"></a></p>
+<p align=center><a href="https://www.npmjs.com/package/blo"><img src="https://img.shields.io/npm/v/blo?colorB=007ec6" alt="npm version"></a> <a href="https://bundlejs.com/?q=blo"><img src="https://deno.bundlejs.com/badge?q=blo" alt="Bundle size"></a> <a href="https://github.com/bpierre/blo/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/blo?colorB=007ec6" alt="License: MIT"></a></p>
 
 ## Features
 
