@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmark</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/style.css">
+    <script type="module" src="/app.mjs"></script>
+  </head>
+  <body>
+    <main>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th aria-label="Relative score"></th><th>Library</th><th colspan="3">Icons / sec</th></tr></thead>
+          <tbody id="benchmarks"></tbody>
+        </table>
+      </div>
+      <div class="controls">
+        <label>Calls / sample <select id="iterations"><option>100</option><option selected>1000</option><option>5000</option></select></label>
+        <label>Samples <select id="samples"><option>3</option><option selected>5</option><option>9</option></select></label>
+        <button id="run-all" disabled>Run all</button>
+        <button id="stop" disabled>Stop</button>
+        <button id="download" disabled>Download results</button>
+      </div>
+      <p id="status" role="status" aria-live="polite">Loading…</p>
+      <p class="method">Data URI generation, including SVG/base64 or canvas/PNG encoding. Display and React mounting are excluded.<br>Median of repeated samples, with fresh addresses so library caches do not replace generation.</p>
+    </main>
+  </body>
+</html>

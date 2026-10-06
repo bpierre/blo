@@ -5,6 +5,9 @@
   "scripts": {
     "bench": "bun index.ts"
   },
+  "devDependencies": {
+    "esbuild": "^0.25.1"
+  },
   "dependencies": {
     "@download/blockies": "^1.0.3",
     "@types/react": "^19.0.12",

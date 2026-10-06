@@ -1,17 +1,20 @@
 import { bench, compact, run, summary } from "mitata";
 
 import { createIcon as blockies_createIcon } from "@download/blockies";
-import { blo } from "blo";
 import blockiesReactSvg_makeBlockiesUrl from "blockies-react-svg/dist/es/makeBlockiesUrl.mjs";
 import { create as blockiesTs_create } from "blockies-ts";
 import ethereumBlockiesBase64_makeBlockie from "ethereum-blockies-base64";
 import ReactBlockies_Identicon from "react-blockies";
+import { blo } from "../dist/esm/index.js";
+import { blo as bloWasm, init } from "../dist/esm/wasm.js";
 import { canvasPolyfill } from "./canvas-polyfill.js";
 
 canvasPolyfill(globalThis);
+init();
 
 const benchmark: Record<string, (address: `0x${string}`) => string> = {
   "blo": blo,
+  "blo/wasm": bloWasm,
   "@download/blockies": (address) => (
     blockies_createIcon({
       seed: address.toLowerCase(),
