@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { defineConfig } from "vite";
 
 function modulePath(format: string, path: string) {
@@ -10,7 +10,7 @@ export default defineConfig({
     target: ["es2021", "esnext"],
     outDir: "dist",
     lib: {
-      entry: "src/index.ts",
+      entry: { index: "src/index.ts", wasm: "src/wasm.ts" },
       formats: ["es", "cjs"],
       fileName: (format, name) => modulePath(format, `${name}.js`),
     },
@@ -37,14 +37,16 @@ export default defineConfig({
     {
       name: "emit-types",
       closeBundle() {
-        execSync([
-          "tsc",
-          "--rootDir ./src",
+        execFileSync(process.execPath, [
+          "node_modules/typescript/bin/tsc",
+          "--rootDir",
+          "./src",
           "--emitDeclarationOnly",
           "--declaration",
           "--declarationMap",
-          "--declarationDir ./dist/types",
-        ].join(" "));
+          "--declarationDir",
+          "./dist/types",
+        ], { stdio: "inherit" });
         console.log(
           `\x1b[32m✓\x1b[0m declaration files emitted to ./dist/types.`,
         );
