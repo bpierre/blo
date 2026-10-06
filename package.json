@@ -24,13 +24,21 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js",
       "default": "./dist/cjs/index.js"
+    },
+    "./wasm": {
+      "types": "./dist/types/wasm.d.ts",
+      "import": "./dist/esm/wasm.js",
+      "default": "./dist/cjs/wasm.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "vite build"
+    "build": "pnpm run build:wasm && vite build",
+    "build:wasm": "node experimental/wasm/build.mjs",
+    "test:wasm": "pnpm run build && node experimental/wasm/test.mjs && node experimental/wasm/package-test.mjs",
+    "bench:wasm": "pnpm run build && node experimental/wasm/bench.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.13.13",

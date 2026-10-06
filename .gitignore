@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated embedded Rust/Wasm binary
+/src/wasm/bytes.ts

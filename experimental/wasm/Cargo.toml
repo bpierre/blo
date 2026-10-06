@@ -1,0 +1,18 @@
+[package]
+name = "blo-wasm"
+version = "0.0.0"
+edition = "2021"
+publish = false
+license = "MIT"
+description = "Experimental allocation-free Rust/Wasm implementation of blo"
+
+[lib]
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
