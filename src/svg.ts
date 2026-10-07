@@ -3,7 +3,7 @@ import type { Address } from "./types.js";
 
 // Generate the left 4x8 pixels, mirrored horizontally at x and 7 - x.
 // Each lookup entry contains both square paths of the final 8x8 icon.
-const squares = /* @__PURE__ */ Array.from({ length: 32 }, (_, i) => {
+const squares = Array.from({ length: 32 }, (_, i) => {
   const x = i & 3; // same as i % 4
   const y = i >> 2; // same as Math.floor(i / 4)
   return `M${x},${y}h1v1h-1zM${7 - x},${y}h1v1h-1z`;
