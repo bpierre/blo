@@ -1,6 +1,7 @@
+import type { Address } from "blo";
 import assert from "node:assert/strict";
-import { addresses, addressSequence } from "../../experimental/wasm/fixtures.mjs";
-import { measureSample, samplePlan } from "./runner.mjs";
+import { addresses, addressSequence } from "../../experimental/wasm/fixtures.js";
+import { measureSample, samplePlan } from "./runner.js";
 
 // Splitting corpus generation must retain the original fixture sequence and
 // keep calibration/sample inputs distinct, rather than restarting a cache hit.
@@ -17,7 +18,7 @@ const plan = samplePlan(costNs, 1000);
 const corpus = addresses(plan.count);
 let clock = 0;
 let calls = 0;
-const fn = (address) => {
+const fn = (address: Address) => {
   clock += costNs / 1e6;
   calls++;
   return address;

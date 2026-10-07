@@ -68,6 +68,6 @@ BLO_BENCH_PORT=5180 pnpm run bench:browser
 ```
 
 Changing Rust, TypeScript, or dependency versions requires rerunning the command
-to rebuild. HTML, CSS, and page script edits need only a reload. The existing
+to rebuild. HTML and CSS edits need only a reload. The existing
 all-library CLI benchmark remains in `benchmark/index.ts`; the separate
 Rust/Wasm CLI experiment still benchmarks all three Blo APIs.

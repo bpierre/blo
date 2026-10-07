@@ -36,13 +36,17 @@
   ],
   "scripts": {
     "build": "pnpm run build:wasm && vite build",
-    "build:wasm": "node experimental/wasm/build.mjs",
-    "test:wasm": "pnpm run build && node experimental/wasm/test.mjs && node experimental/wasm/package-test.mjs",
-    "bench:wasm": "pnpm run build && node experimental/wasm/bench.mjs",
-    "bench:browser": "pnpm run build && node benchmark/browser/build.mjs && node benchmark/browser/server.mjs"
+    "build:wasm": "node --import tsx experimental/wasm/build.ts",
+    "test:wasm": "pnpm run build && node --import tsx experimental/wasm/test.ts && node --import tsx experimental/wasm/package-test.ts",
+    "bench:wasm": "pnpm run build && node --import tsx experimental/wasm/bench.ts",
+    "bench:browser": "pnpm run build && node --import tsx benchmark/browser/build.ts && node --import tsx benchmark/browser/server.ts",
+    "check:tooling": "tsc --project tsconfig.tooling.json",
+    "test:benchmark": "node --import tsx benchmark/browser/runner-test.ts",
+    "test:baseline": "node --import tsx experimental/baseline/build.ts && node --import tsx experimental/baseline/test.ts"
   },
   "devDependencies": {
     "@types/node": "^22.13.13",
+    "tsx": "^4.23.15",
     "typescript": "^5.8.2",
     "vite": "^6.2.3"
   }
