@@ -1,47 +1,32 @@
-import type { Address, BloImage, Hsl, PaletteIndex } from "./types.js";
+import { Random } from "./random.js";
+import type { Address, BloImage, Hsl } from "./types.js";
 
-import { nextRandom, randSeed } from "./random.js";
-
-// The random() calls must happen in this exact order:
-// 1. palette: main color (6 calls)
-// 2. palette: background (6 calls)
-// 3. palette: spot color (6 calls)
-// 4. image data (32 calls)
-
-export function image(address: Address): BloImage {
-  const rseed = randSeed(address.toLowerCase());
-
-  const c = randomColor(rseed); // main color
-  const b = randomColor(rseed); // background
-  const s = randomColor(rseed); // spot color
-
-  const data = new Uint8Array(32);
-  for (let i = 0; i < 32; i++) {
-    data[i] = Math.floor(
-      // background: 43% chances
-      // color:      43% chances
-      // spot:       13% chances
-      nextRandom(rseed) * 2.3,
-    ) as PaletteIndex; // guaranteed to be 0 | 1 | 2
-  }
-
-  return [data, [b, c, s]];
+export function randomColor(random: Random): Hsl {
+  // Uint16Array assignments truncate the values, so Math.floor() is unnecessary.
+  const color = new Uint16Array(3);
+  // Hue spans the whole color spectrum.
+  color[0] = random.next() * 360;
+  // Saturation between 40% and 100% avoids greyish colors.
+  color[1] = 40 + random.next() * 60;
+  // Summing four draws gives lightness a bell-shaped distribution around 50%.
+  color[2] = (random.next() + random.next() + random.next() + random.next()) * 25;
+  return color;
 }
 
-export function randomColor(rseed: Uint32Array): Hsl {
-  // Math.floor() calls omitted since Uint16Array() does it
-  return new Uint16Array([
-    // hue = 0 to 360 (whole color spectrum)
-    nextRandom(rseed) * 360,
-    // saturation = 40 to 100 (avoid greyish colors)
-    40 + nextRandom(rseed) * 60,
-    // lightness = 0 to 100 but probabilities are a bell curve around 50%
-    (
-      nextRandom(rseed)
-      + nextRandom(rseed)
-      + nextRandom(rseed)
-      + nextRandom(rseed)
-    )
-    * 25,
-  ]);
+export function image(address: Address): BloImage {
+  const random = new Random(address);
+  // Random draws must happen in this exact order to preserve the identicon:
+  // 1. palette: main color (6 calls)
+  // 2. palette: background (6 calls)
+  // 3. palette: spot color (6 calls)
+  // 4. image data (32 calls)
+  const color = randomColor(random);
+  const background = randomColor(random);
+  const spot = randomColor(random);
+  const data = new Uint8Array(32);
+  // Truncating random * 2.3 gives palette indices 0 | 1 | 2:
+  // background ~43%, main color ~43%, spot color ~13%.
+  // Uint8Array assignment supplies the truncation without Math.floor().
+  for (let i = 0; i < 32; i++) data[i] = random.next() * 2.3;
+  return [data, [background, color, spot]];
 }

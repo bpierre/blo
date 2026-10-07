@@ -1,7 +1,13 @@
-import { libraries } from "/libraries.mjs";
-import { blo } from "/package/index.js";
-import * as wasm from "/package/wasm.js";
-import { addresses } from "/wasm/fixtures.mjs";
+import {
+  blo,
+  calibrate,
+  libraries,
+  measureSample,
+  SAMPLE_TARGET_MS,
+  samplePlan,
+  wasm,
+} from "/libraries.mjs";
+import { addresses, addressSequence } from "/wasm/fixtures.mjs";
 import { median } from "/wasm/measure.mjs";
 
 const element = (id) => document.getElementById(id);
@@ -12,7 +18,7 @@ let implementations;
 let controller;
 let startupMs;
 const example = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
-const yieldToBrowser = () => new Promise((resolve) => setTimeout(resolve, 0));
+const bloNames = ["blo", "blo/wasm"];
 
 function busy(running) {
   for (const button of document.querySelectorAll(".run")) button.disabled = running;
@@ -37,28 +43,6 @@ function showResults() {
   }
 }
 
-// Only generation and output consumption are timed. Yield between small chunks
-// so Stop and preview painting work even for libraries using DOM canvases.
-async function sample(fn, corpus, offset, count, signal, image) {
-  let elapsed = 0;
-  let sum = 0;
-  let last;
-  for (let i = 0; i < count;) {
-    signal.throwIfAborted();
-    const start = performance.now();
-    const end = Math.min(count, i + 100);
-    for (; i < end; i++) {
-      last = fn(corpus[offset + i]);
-      sum = (sum + last.length + last.charCodeAt(i % last.length)) | 0;
-    }
-    elapsed += performance.now() - start;
-    image.src = last;
-    await yieldToBrowser();
-  }
-  signal.throwIfAborted();
-  return { ns: elapsed * 1e6 / count, sum };
-}
-
 async function run(names) {
   if (controller) return;
   const current = controller = new AbortController();
@@ -66,9 +50,8 @@ async function run(names) {
   const iterations = Number(element("iterations").value);
   const samples = Number(element("samples").value);
   const seed = crypto.getRandomValues(new Uint32Array(1))[0];
-  // New corpus per run. Warmup addresses never appear in timed samples; all
-  // libraries receive the same unique timed addresses in the same sample.
-  const corpus = addresses(iterations * samples + 200, seed);
+  const nextAddresses = addressSequence(seed);
+  const plans = new Map();
   const timings = new Map(names.map((name) => [name, []]));
   const checksums = new Map(names.map((name) => [name, []]));
   for (const name of names) results.delete(name);
@@ -77,37 +60,59 @@ async function run(names) {
   try {
     for (const name of names) {
       status.textContent = `Warming up ${name}…`;
-      await sample(
+      const ns = await calibrate(
         implementations[name],
-        corpus,
-        0,
-        200,
+        nextAddresses,
         signal,
-        rows.get(name).querySelector(".live"),
+        (uri) => {
+          rows.get(name).querySelector(".live").src = uri;
+        },
       );
+      plans.set(name, samplePlan(ns, iterations));
     }
+    const comparedBloNames = bloNames.filter((name) => plans.has(name));
+    // Match call counts across Blo implementations so their checksums remain
+    // comparable. Slower canvas libraries retain their own shorter call counts.
+    const bloCalls = Math.max(
+      0,
+      ...comparedBloNames.map((name) => plans.get(name).count),
+    );
+    for (const name of comparedBloNames) plans.get(name).count = bloCalls;
     for (let i = 0; i < samples; i++) {
+      const corpus = nextAddresses(
+        Math.max(...Array.from(plans.values(), (plan) => plan.count)),
+      );
       for (const name of (i % 2 ? [...names].reverse() : names)) {
-        status.textContent = `${name}: sample ${i + 1} / ${samples}`;
-        const result = await sample(
+        const { count, batchSize } = plans.get(name);
+        status.textContent = `${name}: sample ${
+          i + 1
+        } / ${samples} (${count.toLocaleString()} calls)`;
+        const result = await measureSample(
           implementations[name],
-          corpus,
-          200 + i * iterations,
-          iterations,
+          corpus.slice(0, count),
           signal,
-          rows.get(name).querySelector(".live"),
+          {
+            batchSize,
+            preview: (uri) => {
+              rows.get(name).querySelector(".live").src = uri;
+            },
+          },
         );
+        if (result.ns <= 0) {
+          throw new Error("Browser timer is too coarse to measure this library");
+        }
         timings.get(name).push(result.ns);
         checksums.get(name).push(result.sum);
         const ns = median(timings.get(name));
         rows.get(name).querySelector(".result").textContent = Math.round(1e9 / ns)
           .toLocaleString();
       }
-      if (
-        checksums.has("blo") && checksums.has("blo (Rust/Wasm)")
-        && checksums.get("blo")[i] !== checksums.get("blo (Rust/Wasm)")[i]
-      ) {
-        throw new Error("Blo and Rust/Wasm output checksums differ");
+      for (const name of comparedBloNames.slice(1)) {
+        if (checksums.get(comparedBloNames[0])[i] !== checksums.get(name)[i]) {
+          throw new Error(
+            `${comparedBloNames[0]} and ${name} output checksums differ`,
+          );
+        }
       }
     }
     for (const name of names) {
@@ -118,14 +123,16 @@ async function run(names) {
         ops: 1e9 / ns,
         samplesNs: timings.get(name),
         checksums: checksums.get(name),
-        iterations,
+        iterations: plans.get(name).count,
+        minimumIterations: iterations,
+        batchSize: plans.get(name).batchSize,
         samples,
         date: new Date().toISOString(),
       });
     }
     showResults();
     status.textContent =
-      `Done. Median of ${samples} samples × ${iterations.toLocaleString()} fresh addresses per library.`;
+      `Done. Median of ${samples} samples; call counts calibrated to target ${SAMPLE_TARGET_MS} ms of generation per sample.`;
   } catch (error) {
     showResults();
     status.textContent = signal.aborted
@@ -162,6 +169,8 @@ element("download").addEventListener("click", () => {
   const report = {
     runtime: navigator.userAgent,
     startupMs,
+    nativeBase64Available: typeof Uint8Array.prototype.toBase64 === "function",
+    sampleTargetMs: SAMPLE_TARGET_MS,
     metric: "data URI generations per second; DOM/React rendering excluded",
     cachePolicy: "fresh corpus each run, unique timed addresses, separate warmup",
     results: Array.from(results.values()),
@@ -181,14 +190,19 @@ try {
   wasm.init();
   startupMs = performance.now() - start;
   for (const address of addresses(256)) {
-    if (blo(address) !== wasm.blo(address)) {
-      throw new Error("Blo and Rust/Wasm outputs differ");
+    const expected = blo(address);
+    if (expected !== wasm.blo(address)) {
+      throw new Error("blo and blo/wasm outputs differ");
     }
   }
-  implementations = { blo, "blo (Rust/Wasm)": wasm.blo, ...libraries };
+  implementations = {
+    blo,
+    "blo/wasm": wasm.blo,
+    ...libraries,
+  };
   for (const [name, fn] of Object.entries(implementations)) addRow(name, fn);
   busy(false);
-  status.textContent = "Ready. Blo and Rust/Wasm outputs match for 256 addresses.";
+  status.textContent = "Ready. blo and blo/wasm match for 256 addresses.";
 } catch (error) {
   status.textContent = error.message;
 }

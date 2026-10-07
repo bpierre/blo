@@ -3,21 +3,38 @@ import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
-const [format, first] = process.argv.slice(2);
+const [format, first, encoding = "fallback"] = process.argv.slice(2);
 if (!format) {
   for (const format of ["esm", "cjs"]) {
     for (const first of ["init", "blo", "bloSvg", "bloImage"]) {
-      execFileSync(
-        process.execPath,
-        [fileURLToPath(import.meta.url), format, first],
-        { stdio: "inherit" },
-      );
+      for (const encoding of ["fallback", "native"]) {
+        execFileSync(
+          process.execPath,
+          [fileURLToPath(import.meta.url), format, first, encoding],
+          { stdio: "inherit" },
+        );
+      }
     }
   }
   console.log(
     "Passed ESM/CJS exports, lazy synchronous startup, optional idempotent init, and retry after initialization failure.",
   );
 } else {
+  let nativeCalls = 0;
+  const native = Uint8Array.prototype.toBase64;
+  Object.defineProperty(Uint8Array.prototype, "toBase64", {
+    configurable: true,
+    value: encoding === "native"
+      ? function() {
+        nativeCalls++;
+        return native
+          ? native.call(this)
+          : Buffer.from(this.buffer, this.byteOffset, this.byteLength).toString(
+            "base64",
+          );
+      }
+      : undefined,
+  });
   let modules = 0;
   let instances = 0;
   let fail = false;
@@ -75,4 +92,9 @@ if (!format) {
   }
   assert.equal(modules, 1, "Repeated init and calls reuse the compiled module");
   assert.equal(instances, 1, "Repeated init and calls reuse the instance");
+  assert.equal(
+    nativeCalls > 0,
+    encoding === "native",
+    "Selected native/fallback encoder was exercised",
+  );
 }

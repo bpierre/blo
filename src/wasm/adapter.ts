@@ -27,6 +27,15 @@ export function createAdapter(instance: WebAssembly.Instance): BloWasm {
   const svgBytes = new Uint8Array(memory, wasm.svg_ptr(), 1536);
   const uriBytes = new Uint8Array(memory, wasm.uri_ptr(), 2073);
   const decoder = new TextDecoder();
+  const encode = (Uint8Array.prototype as Uint8Array & {
+    toBase64?: () => string;
+  }).toBase64;
+  // Memory never grows. Reuse views by length, not generated icons. The SVG
+  // and URI buffer capacities bound the number of entries.
+  const svgViews: (Uint8Array | undefined)[] = [];
+  const uriViews: (Uint8Array | undefined)[] = [];
+  let previousSize: number | undefined;
+  let sizeLength = 0;
 
   function color(offset: number) {
     const value = new Uint16Array(3);
@@ -52,22 +61,41 @@ export function createAdapter(instance: WebAssembly.Instance): BloWasm {
 
   function render(address: Address, size: number, mode: number) {
     const length = prepare(address);
-    const text = String(size);
-    if (text.length > sizeBytes.length) {
-      throw new RangeError("Size representation is too long");
+    if (size !== previousSize || sizeLength === 0) {
+      const text = String(size);
+      if (text.length > sizeBytes.length) {
+        throw new RangeError("Size representation is too long");
+      }
+      for (let i = 0; i < text.length; i++) sizeBytes[i] = text.charCodeAt(i);
+      previousSize = size;
+      sizeLength = text.length;
     }
-    for (let i = 0; i < text.length; i++) sizeBytes[i] = text.charCodeAt(i);
-    return wasm.render(length, text.length, mode);
+    return wasm.render(length, sizeLength, mode);
   }
 
-  return {
-    blo(address, size = 64) {
+  // Select the encoder once so generation has no feature-detection branch.
+  const blo: BloWasm["blo"] = typeof encode === "function"
+    ? function blo(address, size = 64) {
+      const length = render(address, size, 1);
+      const bytes = svgViews[length]
+        ?? (svgViews[length] = svgBytes.subarray(0, length));
+      // Encode straight into a JS string with the engine's native codec.
+      return "data:image/svg+xml;base64," + encode.call(bytes);
+    }
+    : function blo(address, size = 64) {
       const length = render(address, size, 2);
-      return decoder.decode(uriBytes.subarray(0, length));
-    },
+      return decoder.decode(
+        uriViews[length] ?? (uriViews[length] = uriBytes.subarray(0, length)),
+      );
+    };
+
+  return {
+    blo,
     bloSvg(address, size = 64) {
       const length = render(address, size, 1);
-      return decoder.decode(svgBytes.subarray(0, length));
+      return decoder.decode(
+        svgViews[length] ?? (svgViews[length] = svgBytes.subarray(0, length)),
+      );
     },
     bloImage(address) {
       wasm.render(prepare(address), 0, 0);
