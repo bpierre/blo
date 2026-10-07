@@ -1,5 +1,5 @@
 // Deterministic, varied addresses generated outside the timed benchmark loops.
-export function addresses(count, seed = 0x6d2b79f5) {
+export function addresses(count: number, seed = 0x6d2b79f5): Address[] {
   return addressSequence(seed)(count);
 }
 
@@ -7,7 +7,7 @@ export function addresses(count, seed = 0x6d2b79f5) {
 // a benchmark run, without retaining every sample's corpus in memory.
 export function addressSequence(seed = 0x6d2b79f5) {
   let state = seed >>> 0 || 0x6d2b79f5;
-  return (count) =>
+  return (count: number): Address[] =>
     Array.from({ length: count }, () => {
       let address = "0x";
       for (let i = 0; i < 5; i++) {
@@ -16,6 +16,7 @@ export function addressSequence(seed = 0x6d2b79f5) {
         state ^= state << 5;
         address += (state >>> 0).toString(16).padStart(8, "0");
       }
-      return address;
+      return address as Address;
     });
 }
+import type { Address } from "../../src/types.js";

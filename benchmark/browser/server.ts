@@ -1,27 +1,28 @@
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:http";
 
-const routes = new Map([
+const routes = new Map<string, readonly [URL, string]>([
   ["/", [new URL("index.html", import.meta.url), "text/html"]],
-  ...["app.mjs"].map((file) => [
-    `/${file}`,
-    [new URL(file, import.meta.url), "text/javascript"],
-  ]),
+  ["/app.js", [new URL("dist/app.js", import.meta.url), "text/javascript"]],
   ["/style.css", [new URL("style.css", import.meta.url), "text/css"]],
-  ["/libraries.mjs", [
-    new URL("dist/libraries.mjs", import.meta.url),
+  ["/libraries.js", [
+    new URL("dist/libraries.js", import.meta.url),
     "text/javascript",
   ]],
-  ...["fixtures.mjs", "measure.mjs"].map((file) => [
-    `/wasm/${file}`,
-    [new URL(`../../experimental/wasm/${file}`, import.meta.url), "text/javascript"],
-  ]),
+  ...["fixtures.js", "measure.js"].map((file) =>
+    [
+      `/wasm/${file}`,
+      [new URL(`dist/wasm/${file}`, import.meta.url), "text/javascript"],
+    ] as const
+  ),
   ...["wasm", "wasm/adapter", "wasm/bytes", "index", "image", "svg", "random"].map((
     name,
-  ) => [
-    `/package/${name}.js`,
-    [new URL(`../../dist/esm/${name}.js`, import.meta.url), "text/javascript"],
-  ]),
+  ) =>
+    [
+      `/package/${name}.js`,
+      [new URL(`../../dist/esm/${name}.js`, import.meta.url), "text/javascript"],
+    ] as const
+  ),
 ]);
 
 const port = Number(process.env.BLO_BENCH_PORT ?? 5174);
@@ -35,7 +36,7 @@ const server = createServer(async (request, response) => {
     return;
   }
   // Serve only the explicit public assets above, never arbitrary repo files.
-  const path = new URL(request.url, "http://localhost").pathname;
+  const path = new URL(request.url ?? "/", "http://localhost").pathname;
   const route = routes.get(path);
   if (!route) {
     response.writeHead(404).end("Not found");
@@ -53,12 +54,12 @@ const server = createServer(async (request, response) => {
     response.end(request.method === "HEAD" ? undefined : bytes);
   } catch {
     response.writeHead(500).end(
-      "Asset missing. Run pnpm run build and restart the server.",
+      "Asset missing. Run pnpm run bench:browser to rebuild and restart the server.",
     );
   }
 });
 
-server.on("error", (error) => {
+server.on("error", (error: NodeJS.ErrnoException) => {
   console.error(
     error.code === "EADDRINUSE"
       ? `Port ${port} is busy. Set BLO_BENCH_PORT to another port.`

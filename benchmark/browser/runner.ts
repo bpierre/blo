@@ -1,19 +1,35 @@
+import type { Address } from "blo";
+
+type Generator = (address: Address) => string;
+type Preview = (uri: string) => void;
+interface SampleOptions {
+  batchSize?: number;
+  preview?: Preview;
+  now?: () => number;
+  yieldTask?: () => Promise<void>;
+}
+
 export const SAMPLE_TARGET_MS = 250;
 const BATCH_TARGET_MS = 50;
 const MAX_CALLS = 1000000;
-const yieldToBrowser = () => new Promise((resolve) => setTimeout(resolve, 0));
+const yieldToBrowser = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 // Only generation and output consumption are timed. Batch sizing comes from
 // calibration, so fast libraries aren't measured in sub-millisecond fragments.
-export async function measureSample(fn, corpus, signal, {
-  batchSize = corpus.length,
-  preview = () => {},
-  now = () => performance.now(),
-  yieldTask = yieldToBrowser,
-} = {}) {
+export async function measureSample(
+  fn: Generator,
+  corpus: readonly Address[],
+  signal: AbortSignal,
+  {
+    batchSize = corpus.length,
+    preview = () => {},
+    now = () => performance.now(),
+    yieldTask = yieldToBrowser,
+  }: SampleOptions = {},
+) {
   let elapsedMs = 0;
   let sum = 0;
-  let last;
+  let last = "";
   for (let i = 0; i < corpus.length;) {
     signal.throwIfAborted();
     const end = Math.min(corpus.length, i + batchSize);
@@ -30,7 +46,12 @@ export async function measureSample(fn, corpus, signal, {
   return { ns: elapsedMs * 1e6 / corpus.length, elapsedMs, sum };
 }
 
-export async function calibrate(fn, nextAddresses, signal, preview) {
+export async function calibrate(
+  fn: Generator,
+  nextAddresses: (count: number) => Address[],
+  signal: AbortSignal,
+  preview: Preview,
+) {
   let count = 256;
   while (true) {
     const result = await measureSample(fn, nextAddresses(count), signal, {
@@ -46,7 +67,7 @@ export async function calibrate(fn, nextAddresses, signal, preview) {
   }
 }
 
-export function samplePlan(ns, minimumCalls) {
+export function samplePlan(ns: number, minimumCalls: number) {
   return {
     count: Math.min(
       MAX_CALLS,

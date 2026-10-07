@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": ".",
+    "noEmit": true,
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "blo": [
+        "./src/index.ts"
+      ],
+      "blo/wasm": [
+        "./src/wasm.ts"
+      ],
+      "/libraries.js": [
+        "./benchmark/browser/libraries.ts"
+      ],
+      "/wasm/fixtures.js": [
+        "./experimental/wasm/fixtures.ts"
+      ],
+      "/wasm/measure.js": [
+        "./experimental/wasm/measure.ts"
+      ]
+    }
+  },
+  "include": [
+    "benchmark/browser/*.ts",
+    "benchmark/declarations.d.ts",
+    "experimental/wasm/*.ts",
+    "experimental/baseline/*.ts"
+  ]
+}
