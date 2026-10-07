@@ -20,15 +20,15 @@
 
 | Library                               | Operations/sec[^1] | Size                                                                                                       | Types                                        | Environment[^2]                                | Rendering |
 | ------------------------------------- | -----------------: | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------- | --------: |
-| <b>blo</b>                            |         💥 315,457 | [![](https://img.shields.io/badge/0.70kB-6ead0a)](https://bundlejs.com/?bundle&q=blo)                      | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/all-6ead0a)   |       SVG |
-| <nobr>blo/wasm (experimental)</nobr>  |       💥💥 653,595 | [![](https://img.shields.io/badge/3.55kB-ee4433)](./experimental/wasm/README.md)[^3]                       | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/all-6ead0a)   |       SVG |
+| <b>blo</b>                            |         💥 315,457 | [![](https://img.shields.io/badge/0.66kB-6ead0a)](https://bundlejs.com/?bundle&q=blo)                      | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/all-6ead0a)   |       SVG |
+| <nobr>blo/wasm (experimental)</nobr>  |       💥💥 653,595 | [![](https://img.shields.io/badge/3.90kB-ee4433)](./experimental/wasm/README.md)[^3]                       | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/all-6ead0a)   |       SVG |
 | <nobr>ethereum-blockies-base64</nobr> |              1,816 | [![](https://img.shields.io/badge/2.75kB-ee4433)](https://bundlejs.com/?bundle&q=ethereum-blockies-base64) | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/all-6ead0a)   |       PNG |
 | <nobr>blockies-react-svg</nobr>       |             66,313 | [![](https://img.shields.io/badge/4.00kB-ee4433)](https://bundlejs.com/?bundle&q=blockies-react-svg)       | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/react-ee4433) |       SVG |
 | <nobr>@download/blockies</nobr>       |                 95 | [![](https://img.shields.io/badge/0.67kB-6ead0a)](https://bundlejs.com/?bundle&q=%6ead0a%2Fblockies)       | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/dom-ee4433)   |    Canvas |
 | <nobr>blockies-ts</nobr>              |                102 | [![](https://img.shields.io/badge/1.31kB-6ead0a)](https://bundlejs.com/?bundle&q=blockies-ts)              | ![](https://img.shields.io/badge/yes-6ead0a) | ![](https://img.shields.io/badge/dom-ee4433)   |    Canvas |
 | <nobr>react-blockies</nobr>           |              4,024 | [![](https://img.shields.io/badge/4.72kB-ee4433)](https://bundlejs.com/?bundle&q=react-blockies)           | ![](https://img.shields.io/badge/no-ee4433)  | ![](https://img.shields.io/badge/react-ee4433) |    Canvas |
 
-[^1]: Operations/sec are calculated from the average times in the [benchmark](#benchmark) below (higher is better). Wasm initialization is excluded.
+[^1]: Operations/sec are calculated from the average times in the [benchmark](#benchmark) below (higher is better). The recorded results use blo 2.1.0; rerun for the current package. Wasm initialization is excluded.
 [^2]: The term “all” refers to libraries that are framework agnostic and that run in browsers, Bun and Node.js.
 [^3]: Measured locally with esbuild and gzip, importing `blo` and `init` from `blo/wasm`.
 

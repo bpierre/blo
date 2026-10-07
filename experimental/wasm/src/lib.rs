@@ -7,8 +7,15 @@ struct Random([u32; 4]);
 impl Random {
     fn new(seed: &[u16]) -> Self {
         let mut state = [0u32; 4];
-        for (i, &ch) in seed.iter().enumerate() {
-            state[i & 3] = state[i & 3].wrapping_mul(31).wrapping_add(ch as u32);
+        let mut chunks = seed.chunks_exact(4);
+        for chunk in chunks.by_ref() {
+            state[0] = state[0].wrapping_mul(31).wrapping_add(chunk[0] as u32);
+            state[1] = state[1].wrapping_mul(31).wrapping_add(chunk[1] as u32);
+            state[2] = state[2].wrapping_mul(31).wrapping_add(chunk[2] as u32);
+            state[3] = state[3].wrapping_mul(31).wrapping_add(chunk[3] as u32);
+        }
+        for (i, &ch) in chunks.remainder().iter().enumerate() {
+            state[i] = state[i].wrapping_mul(31).wrapping_add(ch as u32);
         }
         Self(state)
     }
@@ -52,7 +59,9 @@ fn image(seed: &[u16]) -> Image {
     let spot = random.color();
     let mut pixels = [0u8; 32];
     for pixel in &mut pixels {
-        *pixel = (random.next() as f64 * (1.0 / 2147483648.0) * 2.3) as u8;
+        let value = random.next();
+        // Exact boundaries for floor((value / 2^31) * 2.3).
+        *pixel = u8::from(value >= 933_688_543) + u8::from(value >= 1_867_377_086);
     }
     Image {
         pixels,
@@ -86,13 +95,21 @@ impl<'a> Writer<'a> {
         }
         self.push(&[b'0' + (n % 10) as u8]);
     }
-
-    #[inline]
-    fn square(&mut self, x: u8, y: u8) {
-        self.push(&[b'M', b'0' + x, b',', b'0' + y]);
-        self.push(b"h1v1h-1z");
-    }
 }
+
+// Precompute both mirrored squares at compile time.
+const SQUARES: [[u8; 24]; 32] = {
+    let mut squares = [*b"M0,0h1v1h-1zM7,0h1v1h-1z"; 32];
+    let mut i = 0;
+    while i < 32 {
+        squares[i][1] = b'0' + (i & 3) as u8;
+        squares[i][3] = b'0' + (i >> 2) as u8;
+        squares[i][13] = b'0' + (7 - (i & 3)) as u8;
+        squares[i][15] = b'0' + (i >> 2) as u8;
+        i += 1;
+    }
+    squares
+};
 
 fn svg(image: &Image, size: &[u8], output: &mut [u8]) -> usize {
     let mut out = Writer::new(output);
@@ -114,10 +131,7 @@ fn svg(image: &Image, size: &[u8], output: &mut [u8]) -> usize {
         } else {
             for (i, &pixel) in image.pixels.iter().enumerate() {
                 if pixel == index as u8 {
-                    let x = (i & 3) as u8;
-                    let y = (i >> 2) as u8;
-                    out.square(x, y);
-                    out.square(7 - x, y);
+                    out.push(&SQUARES[i]);
                 }
             }
         }

@@ -14,6 +14,9 @@ The first call initializes automatically; repeated `init()` calls reuse the
 instance. The Wasm bytes are included in the JavaScript as a base64 string,
 so initialization needs no separate download or `await`.
 
+Data URIs use native byte-to-base64 encoding when available, with a Wasm
+fallback for older runtimes.
+
 ## Build and benchmark
 
 Install stable Rust, then run from the repository root:
@@ -31,10 +34,9 @@ run `pnpm run bench:browser`.
 
 ## Tradeoffs
 
-On a Ryzen 7 PRO 7840U, `blo()` measured 2.4× faster in Node 24 and 3.0× in
-Bun 1.4 (nine samples × 200,000 calls, initialization excluded). Full `init()`
-measured about 1 ms in Node and 2.5 ms in Bun; timings vary by environment.
+Run the browser comparison for performance on your engine. Initialization is
+measured separately.
 
-A minified browser bundle of `blo` and `init` measured 3.5 kB gzipped, compared
+A minified browser bundle of `blo` and `init` measured 3.9 kB gzipped, compared
 with 0.7 kB for JavaScript `blo`. Seeds are limited to 65,536 UTF-16 code units
 after lowercasing (fine for Ethereum addresses); longer inputs throw `RangeError`.
