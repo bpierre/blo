@@ -24,134 +24,174 @@ interface Result {
   samples: number;
   date: string;
 }
-type Implementations = Record<string, (address: Address) => string>;
-
-function element<T extends HTMLElement = HTMLElement>(id: string): T {
-  const node = document.getElementById(id);
-  if (!node) throw new Error(`Missing benchmark element: ${id}`);
-  return node as T;
+interface Benchmark {
+  name: string;
+  generate: (address: Address) => string;
+  view: {
+    result: HTMLTableCellElement;
+    bar: HTMLDivElement;
+    live: HTMLImageElement;
+    button: HTMLButtonElement;
+  };
+  result?: Result;
 }
-const status = element("status");
-const results = new Map<string, Result>();
-const rows = new Map<string, HTMLTableRowElement>();
-let implementations: Implementations | undefined;
+interface Run {
+  benchmark: Benchmark;
+  plan: ReturnType<typeof samplePlan>;
+  timings: number[];
+  checksums: number[];
+}
+
+function element<T extends HTMLElement>(
+  selector: string,
+  constructor: { new(): T },
+  parent: ParentNode = document,
+): T {
+  const node = parent.querySelector(selector);
+  if (!(node instanceof constructor)) {
+    throw new Error(`Missing or invalid benchmark element: ${selector}`);
+  }
+  return node;
+}
+const status = element("#status", HTMLParagraphElement);
+const runAll = element("#run-all", HTMLButtonElement);
+const stop = element("#stop", HTMLButtonElement);
+const download = element("#download", HTMLButtonElement);
+const iterationSelect = element("#iterations", HTMLSelectElement);
+const sampleSelect = element("#samples", HTMLSelectElement);
+const tableBody = element("#benchmarks", HTMLTableSectionElement);
+const benchmarks: Benchmark[] = [];
 let controller: AbortController | undefined;
 let startupMs: number | undefined;
 const example = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
 const bloNames = ["blo", "blo/wasm"];
 
 function busy(running: boolean) {
-  for (const button of document.querySelectorAll<HTMLButtonElement>(".run")) {
-    button.disabled = running;
+  for (const benchmark of benchmarks) {
+    benchmark.view.button.disabled = running;
   }
-  element<HTMLButtonElement>("run-all").disabled = running || !implementations;
-  element<HTMLButtonElement>("stop").disabled = !running;
-  element<HTMLSelectElement>("iterations").disabled = running;
-  element<HTMLSelectElement>("samples").disabled = running;
-  element<HTMLButtonElement>("download").disabled = running || results.size === 0;
+  runAll.disabled = running || benchmarks.length === 0;
+  stop.disabled = !running;
+  iterationSelect.disabled = running;
+  sampleSelect.disabled = running;
+  download.disabled = running || !benchmarks.some((benchmark) => benchmark.result);
 }
 
 function showResults() {
-  const best = Math.max(0, ...Array.from(results.values(), (result) => result.ops));
-  for (const [name, row] of rows) {
-    const result = results.get(name);
-    row.querySelector<HTMLTableCellElement>(".result")!.textContent = result
+  const best = Math.max(
+    0,
+    ...benchmarks.map((benchmark) => benchmark.result?.ops ?? 0),
+  );
+  for (const { result, view } of benchmarks) {
+    view.result.textContent = result
       ? Math.round(result.ops).toLocaleString()
       : "-";
     const score = best && result ? result.ops / best : 0;
-    const bar = row.querySelector<HTMLDivElement>(".bar")!;
+    const bar = view.bar;
     bar.style.width = `${score * 100}px`;
     bar.style.background = `hsl(${Math.round(score * 120)}, 50%, 70%)`;
   }
 }
 
-async function run(names: string[]) {
-  if (controller || !implementations) return;
+async function run(selected: readonly Benchmark[]) {
+  if (controller || selected.length === 0) return;
   const current = controller = new AbortController();
   const signal = current.signal;
-  const iterations = Number(element<HTMLSelectElement>("iterations").value);
-  const samples = Number(element<HTMLSelectElement>("samples").value);
+  const iterations = Number(iterationSelect.value);
+  const samples = Number(sampleSelect.value);
   const seed = crypto.getRandomValues(new Uint32Array(1))[0];
   const nextAddresses = addressSequence(seed);
-  const plans = new Map<string, ReturnType<typeof samplePlan>>();
-  const timings = new Map<string, number[]>(names.map((name) => [name, []]));
-  const checksums = new Map<string, number[]>(names.map((name) => [name, []]));
-  for (const name of names) results.delete(name);
+  const runs: Run[] = [];
+  for (const benchmark of selected) benchmark.result = undefined;
   showResults();
   busy(true);
   try {
-    for (const name of names) {
+    for (const benchmark of selected) {
+      const { name, generate, view } = benchmark;
       status.textContent = `Warming up ${name}…`;
       const ns = await calibrate(
-        implementations[name],
+        generate,
         nextAddresses,
         signal,
         (uri) => {
-          rows.get(name)!.querySelector<HTMLImageElement>(".live")!.src = uri;
+          view.live.src = uri;
         },
       );
-      plans.set(name, samplePlan(ns, iterations));
+      runs.push({
+        benchmark,
+        plan: samplePlan(ns, iterations),
+        timings: [],
+        checksums: [],
+      });
     }
-    const comparedBloNames = bloNames.filter((name) => plans.has(name));
+    const comparedBlo = runs.filter(({ benchmark }) =>
+      bloNames.includes(benchmark.name)
+    );
     // Match call counts across Blo implementations so their checksums remain
     // comparable. Slower canvas libraries retain their own shorter call counts.
     const bloCalls = Math.max(
       0,
-      ...comparedBloNames.map((name) => plans.get(name)!.count),
+      ...comparedBlo.map(({ plan }) => plan.count),
     );
-    for (const name of comparedBloNames) plans.get(name)!.count = bloCalls;
+    for (const { plan } of comparedBlo) plan.count = bloCalls;
     for (let i = 0; i < samples; i++) {
       const corpus = nextAddresses(
-        Math.max(...Array.from(plans.values(), (plan) => plan.count)),
+        Math.max(...runs.map(({ plan }) => plan.count)),
       );
-      for (const name of (i % 2 ? [...names].reverse() : names)) {
-        const { count, batchSize } = plans.get(name)!;
+      for (
+        const { benchmark, plan, timings, checksums }
+          of (i % 2 ? [...runs].reverse() : runs)
+      ) {
+        const { name, generate, view } = benchmark;
+        const { count, batchSize } = plan;
         status.textContent = `${name}: sample ${
           i + 1
         } / ${samples} (${count.toLocaleString()} calls)`;
         const result = await measureSample(
-          implementations[name],
+          generate,
           corpus.slice(0, count),
           signal,
           {
             batchSize,
             preview: (uri) => {
-              rows.get(name)!.querySelector<HTMLImageElement>(".live")!.src = uri;
+              view.live.src = uri;
             },
           },
         );
         if (result.ns <= 0) {
           throw new Error("Browser timer is too coarse to measure this library");
         }
-        timings.get(name)!.push(result.ns);
-        checksums.get(name)!.push(result.sum);
-        const ns = median(timings.get(name)!);
-        rows.get(name)!.querySelector<HTMLTableCellElement>(".result")!.textContent =
-          Math.round(1e9 / ns)
-            .toLocaleString();
+        timings.push(result.ns);
+        checksums.push(result.sum);
+        const ns = median(timings);
+        view.result.textContent = Math.round(1e9 / ns)
+          .toLocaleString();
       }
-      for (const name of comparedBloNames.slice(1)) {
-        if (checksums.get(comparedBloNames[0])![i] !== checksums.get(name)![i]) {
-          throw new Error(
-            `${comparedBloNames[0]} and ${name} output checksums differ`,
-          );
+      const [firstBlo, ...otherBlo] = comparedBlo;
+      if (firstBlo) {
+        for (const other of otherBlo) {
+          if (firstBlo.checksums[i] !== other.checksums[i]) {
+            throw new Error(
+              `${firstBlo.benchmark.name} and ${other.benchmark.name} output checksums differ`,
+            );
+          }
         }
       }
     }
-    for (const name of names) {
-      const ns = median(timings.get(name)!);
-      results.set(name, {
-        name,
+    for (const { benchmark, plan, timings, checksums } of runs) {
+      const ns = median(timings);
+      benchmark.result = {
+        name: benchmark.name,
         ns,
         ops: 1e9 / ns,
-        samplesNs: timings.get(name)!,
-        checksums: checksums.get(name)!,
-        iterations: plans.get(name)!.count,
+        samplesNs: timings,
+        checksums,
+        iterations: plan.count,
         minimumIterations: iterations,
-        batchSize: plans.get(name)!.batchSize,
+        batchSize: plan.batchSize,
         samples,
         date: new Date().toISOString(),
-      });
+      };
     }
     showResults();
     status.textContent =
@@ -169,34 +209,49 @@ async function run(names: string[]) {
   }
 }
 
-function addRow(name: string, fn: (address: Address) => string) {
+function createBenchmark(
+  name: string,
+  generate: (address: Address) => string,
+): Benchmark {
   const row = document.createElement("tr");
   row.dataset.library = name;
   row.innerHTML =
     "<td class=\"score\"><div class=\"bar\"></div></td><td class=\"name\"></td><td class=\"result\">-</td><td><button class=\"run\" disabled>Run</button></td><td><div class=\"render-zone\"><div><img class=\"live\" alt=\"\"></div><div><img class=\"example\" alt=\"\"></div></div></td>";
-  row.querySelector<HTMLTableCellElement>(".name")!.textContent = name;
-  const image = fn(example);
-  row.querySelector<HTMLImageElement>(".live")!.src = image;
-  row.querySelector<HTMLImageElement>(".example")!.src = image;
-  row.querySelector<HTMLImageElement>(".live")!.alt = `${name} benchmark icon`;
-  row.querySelector<HTMLImageElement>(".example")!.alt = `${name} sample icon`;
-  row.querySelector<HTMLButtonElement>(".run")!.addEventListener(
+  element(".name", HTMLTableCellElement, row).textContent = name;
+  const live = element(".live", HTMLImageElement, row);
+  const sample = element(".example", HTMLImageElement, row);
+  const button = element(".run", HTMLButtonElement, row);
+  const image = generate(example);
+  live.src = sample.src = image;
+  live.alt = `${name} benchmark icon`;
+  sample.alt = `${name} sample icon`;
+  const benchmark: Benchmark = {
+    name,
+    generate,
+    view: {
+      result: element(".result", HTMLTableCellElement, row),
+      bar: element(".bar", HTMLDivElement, row),
+      live,
+      button,
+    },
+  };
+  button.addEventListener(
     "click",
-    () => run([name]),
+    () => run([benchmark]),
   );
-  rows.set(name, row);
-  element("benchmarks").append(row);
+  tableBody.append(row);
+  return benchmark;
 }
 
-element<HTMLButtonElement>("run-all").addEventListener(
+runAll.addEventListener(
   "click",
-  () => run(Object.keys(implementations!)),
+  () => run(benchmarks),
 );
-element<HTMLButtonElement>("stop").addEventListener(
+stop.addEventListener(
   "click",
   () => controller?.abort(),
 );
-element<HTMLButtonElement>("download").addEventListener("click", () => {
+download.addEventListener("click", () => {
   const report = {
     runtime: navigator.userAgent,
     startupMs,
@@ -206,7 +261,7 @@ element<HTMLButtonElement>("download").addEventListener("click", () => {
     sampleTargetMs: SAMPLE_TARGET_MS,
     metric: "data URI generations per second; DOM/React rendering excluded",
     cachePolicy: "fresh corpus each run, unique timed addresses, separate warmup",
-    results: Array.from(results.values()),
+    results: benchmarks.flatMap(({ result }) => result ? [result] : []),
   };
   const url = URL.createObjectURL(
     new Blob([JSON.stringify(report, null, 2) + "\n"], { type: "application/json" }),
@@ -228,12 +283,16 @@ try {
       throw new Error("blo and blo/wasm outputs differ");
     }
   }
-  implementations = {
+  const implementations = {
     blo,
     "blo/wasm": wasm.blo,
     ...libraries,
   };
-  for (const [name, fn] of Object.entries(implementations)) addRow(name, fn);
+  benchmarks.push(
+    ...Object.entries(implementations).map(([name, generate]) =>
+      createBenchmark(name, generate)
+    ),
+  );
   busy(false);
   status.textContent = "Ready. blo and blo/wasm match for 256 addresses.";
 } catch (error) {
