@@ -1,6 +1,6 @@
 import type { Address, BloImage } from "./types.js";
 import { type BloWasm, createAdapter } from "./wasm/adapter.js";
-import { base64 } from "./wasm/bytes.js";
+import { binary } from "./wasm/bytes.js";
 
 export type {
   Address,
@@ -16,9 +16,8 @@ let instance: BloWasm | undefined;
 /** Prepare the embedded Wasm synchronously. Optional and safe to call repeatedly. */
 export function init(): void {
   if (instance) return;
-  const decoded = atob(base64);
-  const bytes = new Uint8Array(decoded.length);
-  for (let i = 0; i < decoded.length; i++) bytes[i] = decoded.charCodeAt(i);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
   const module = new WebAssembly.Module(bytes);
   instance = createAdapter(new WebAssembly.Instance(module));
 }
