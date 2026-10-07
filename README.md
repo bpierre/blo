@@ -9,7 +9,7 @@
 ## Features
 
 - 🐥 **Small**: **[0.7 kB](https://bundlejs.com/?bundle&q=blo)** gzipped, even less with tree shaking.
-- 💥 **Fast**: **[more than 4x faster](#benchmark)** than other blockies libraries.
+- 💥 **Fast**: **[more than 9x faster](#benchmark)** than other blockies libraries.
 - 🔍 **Optimized**: Leverages SVG to generate compact and sharp images at any size.
 - 💆 **Simple**: Focuses on Ethereum identicons only, allowing for a simpler API.
 - 🗂 **Typed**: Ships with [TypeScript definitions](#types).
