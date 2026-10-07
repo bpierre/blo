@@ -1,6 +1,7 @@
 import type { Address } from "./types.js";
 
-// Four scalar fields avoid allocating a typed array for the random state.
+// Xorshift state: [x, y, z, w], four 32-bit values. Scalar fields avoid
+// allocating a typed array for the random state.
 export class Random {
   x = 0;
   y = 0;
@@ -8,6 +9,8 @@ export class Random {
   w = 0;
 
   constructor(address: Address) {
+    // Based on Java's String.hashCode(), expanded to four interleaved hashes:
+    // each UTF-16 code unit updates one state value with hash * 31 + code unit.
     const seed = address.toLowerCase();
     let i = 0;
     for (; i + 3 < seed.length; i += 4) {
@@ -22,6 +25,7 @@ export class Random {
   }
 
   next(): number {
+    // Advance xorshift once, then scale its output to [0, 1).
     const t = this.x ^ (this.x << 11);
     const w = this.w;
     this.x = this.y;
