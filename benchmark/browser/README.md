@@ -5,8 +5,8 @@ buttons, and two 64×64 previews per row, with a new runner and a Rust/Wasm row.
 
 Libraries:
 
-- blo (current TypeScript sources)
-- blo (packaged synchronous Rust/Wasm entry)
+- blo (current package)
+- blo/wasm (current package)
 - ethereum-blockies-base64
 - blockies-react-svg
 - @download/blockies
@@ -23,17 +23,21 @@ rustup target add wasm32-unknown-unknown
 pnpm run bench:browser
 ```
 
-Open **http://127.0.0.1:5174**. The command builds the Wasm module, current
-TypeScript sources, and a local browser bundle of the other libraries. It then
-starts a server exposing only the public benchmark assets. The Wasm row uses
-the packaged ESM entry with its embedded binary and synchronous `init()`, whose
-full duration is included separately in exported results. No CDN is needed.
+Open **http://127.0.0.1:5174**. The command builds the current package and a
+browser bundle of all libraries. Both Blo rows use the built package entries,
+including the selected TS and Rust optimizations. Synchronous Wasm
+initialization is timed separately and included in exported results, together with
+native base64 availability. The current adapter uses native byte-to-base64 encoding
+when available and the Wasm encoder otherwise. No CDN is needed.
 
-Use each row's **Run** button, or **Run all**. Select calls per sample and sample
-count underneath. The left preview changes during the benchmark; the right
+Use each row's **Run** button, or **Run all**. Select minimum calls per sample and
+sample count underneath. The runner calibrates actual call counts to target
+250 ms of generation per sample, so fast implementations aren't compared using
+just a few timer ticks. The left preview changes during the benchmark; the right
 preview keeps the original sample address. Score bars compare completed
 throughput measurements. Stop discards incomplete results; JSON export includes
-only completed results, with their raw sample timings and settings.
+only completed results, with their raw sample timings, actual call counts, batch
+sizes, and settings.
 
 The old page measured React mounts. This replacement measures **data URI
 generation**, including SVG/base64 or canvas/PNG encoding, and consumes every
@@ -44,16 +48,18 @@ CLI benchmark, without react-component-benchmark.
 
 Runs warm each implementation, alternate measurement order between samples,
 and report the median. All libraries in a Run all comparison receive the same
-addresses. Addresses are generated before timing and are fresh on every run;
+addresses, with equal call counts for blo and blo/wasm. Other libraries
+use the same address prefixes with individually calibrated counts. Addresses are
+generated before timing from one continuous sequence and are fresh on every run;
 warmup and timed addresses are distinct. This prevents blockies-react-svg's
-internal cache from substituting lookups for icon generation. Blo and Rust/Wasm
+internal cache from substituting lookups for icon generation. Both Blo implementations
 are checked for identical output before benchmarking and matching checksums
 when run together.
 
 DOM canvas APIs require the main browser thread. The runner yields between
-chunks of 100 calls so previews and Stop remain responsive; yields and preview
-updates are excluded from timings. Keep the tab visible and use larger sample
-counts for more stable measurements.
+calibrated batches targeting 50 ms so previews and Stop remain responsive. Yields,
+address generation, and preview updates are excluded from timings. Keep the tab
+visible and use larger sample counts for more stable measurements.
 
 Choose a different port with:
 

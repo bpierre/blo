@@ -4,6 +4,15 @@ import { create } from "blockies-ts";
 import makeBlockie from "ethereum-blockies-base64";
 import ReactBlockies from "react-blockies";
 
+export { blo } from "../../dist/esm/index.js";
+export * as wasm from "../../dist/esm/wasm.js";
+export {
+  calibrate,
+  measureSample,
+  SAMPLE_TARGET_MS,
+  samplePlan,
+} from "./runner.mjs";
+
 // The legacy CommonJS package exposes its component under `default` when
 // imported from an ES module. Support both package interop shapes.
 const Identicon = ReactBlockies.default ?? ReactBlockies;
