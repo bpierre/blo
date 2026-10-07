@@ -11,7 +11,7 @@ img.src = blo("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045");
 ```
 
 The first call initializes automatically; repeated `init()` calls reuse the
-instance. The Wasm bytes are included in the JavaScript as a base64 string,
+instance. The Wasm bytes are included in the JavaScript,
 so initialization needs no separate download or `await`.
 
 Data URIs use native byte-to-base64 encoding when available, with a Wasm
@@ -37,6 +37,6 @@ run `pnpm run bench:browser`.
 Run the browser comparison for performance on your engine. Initialization is
 measured separately.
 
-A minified browser bundle of `blo` and `init` measured 3.9 kB gzipped, compared
+A minified browser bundle of `blo` and `init` measured 3.4 kB gzipped, compared
 with 0.7 kB for JavaScript `blo`. Seeds are limited to 65,536 UTF-16 code units
 after lowercasing (fine for Ethereum addresses); longer inputs throw `RangeError`.
